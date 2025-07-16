@@ -76,7 +76,7 @@ h1 {
   letter-spacing: 2px;
   text-shadow: 0 4px 24px #0008, 0 1px 0 #008891;
   text-align: center;
-  margin-top: 2.2rem;
+  margin-top: 3.7rem;
   margin-bottom: 1.5rem;
 }
 
@@ -220,18 +220,67 @@ h1 {
 }
 .controls-bar {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80vw;
+  max-width: 1000px;
+  margin: 0 auto 2.5rem auto;
+  gap: 0.7rem;
+}
+.controls-row {
+  display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
   gap: 1.2rem;
-  margin-bottom: 2.5rem;
   width: 100%;
-  max-width: 1000px;
+  max-width: 600px;
+}
+.controls-row-center {
+  justify-content: center;
+}
+.controls-bar button {
+  flex: 1 1 0;
+  min-width: 180px;
+  max-width: 240px;
+  padding: 1.1rem 0;
+  font-size: 1.18em;
+  font-family: 'Nunito', Arial, sans-serif;
+  font-weight: 700;
+  border: 2px solid #00cfff;
+  border-radius: 12px;
+  background: #e0f7fa;
+  color: #00796b;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #00cfff33;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
+  letter-spacing: 1px;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.controls-bar button:hover {
+  background: #00cfff;
+  color: #fff;
+  border-color: #008891;
+  box-shadow: 0 4px 24px #00cfff88, 0 2px 12px #0003;
+  transform: translateY(-2px) scale(1.04);
 }
 @media (max-width: 700px) {
   .controls-bar {
-    flex-wrap: wrap;
-    gap: 0.7rem;
+    width: 98vw;
+    max-width: 100vw;
+    gap: 0.5rem;
+  }
+  .controls-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 98vw;
+  }
+  .controls-bar button {
+    min-width: 0;
+    max-width: 100vw;
+    font-size: 1em;
+    padding: 0.9rem 0;
   }
 }
 .hud-spacer {
@@ -246,6 +295,34 @@ h1 {
   justify-content: flex-start;
   width: 100vw;
   min-height: 100vh;
+  position: relative;
+}
+#back-to-start-btn.back-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 2.2rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: #e0f7fa;
+  border: 2px solid #00cfff;
+  color: #008891;
+  font-size: 1.3rem;
+  font-weight: bold;
+  box-shadow: 0 2px 12px #00cfff33;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
+  z-index: 50;
+}
+#back-to-start-btn.back-btn:hover {
+  background: #00cfff;
+  color: #fff;
+  border-color: #008891;
+  box-shadow: 0 4px 24px #00cfff88, 0 2px 12px #0003;
+  transform: translateY(-2px) scale(1.04);
 }
 
 @keyframes fishSwimX {

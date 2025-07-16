@@ -30,6 +30,7 @@
   </div>
   <div id="site-bg" style="display:none;">
     <div id="game-container" style="display:none;">
+      <button id="back-to-start-btn" class="back-btn" title="Back to Start">&#8592;</button>
       <div class="game-title">Fish Farm</div>
       <header>
         <div id="hud"></div>
@@ -41,11 +42,17 @@
           <div id="fish-layer"></div>
         </div>
         <div class="controls-bar">
-          <button id="feed-btn">Feed Fish</button>
-          <button id="clean-btn">Clean Tank</button>
-          <button id="rest-btn">Rest</button>
-          <button id="add-fish-btn">Add Fish</button>
-          <button id="add-decor-btn">Add Decor</button>
+          <div class="controls-row">
+            <button id="feed-btn">Feed Fish</button>
+            <button id="clean-btn">Clean Tank</button>
+          </div>
+          <div class="controls-row">
+            <button id="rest-btn">Rest</button>
+            <button id="add-fish-btn">Add Fish</button>
+          </div>
+          <div class="controls-row controls-row-center">
+            <button id="add-decor-btn">Add Decor</button>
+          </div>
         </div>
         <section id="decor-section" style="display:none;"></section>
         <section id="tank-section" style="display:none;"></section>

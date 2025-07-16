@@ -15,6 +15,7 @@ const cogBtn = document.getElementById('cog-btn');
 const controlsModal = document.getElementById('controls-modal');
 const closeModal = document.getElementById('close-modal');
 const siteBg = document.getElementById('site-bg');
+const backToStartBtn = document.getElementById('back-to-start-btn');
 
 // Helper to create bubbles for start/instructions
 function createBubbles(container, num = 18) {
@@ -59,6 +60,15 @@ backBtn.onclick = () => {
   siteBg.style.display = 'none';
   gameContainer.style.display = 'none';
 };
+
+if (backToStartBtn) {
+  backToStartBtn.onclick = () => {
+    document.getElementById('start-screen').style.display = '';
+    document.getElementById('how-to-play-screen').style.display = 'none';
+    document.getElementById('site-bg').style.display = 'none';
+    document.getElementById('game-container').style.display = 'none';
+  };
+}
 
 // --- Tap Tap Fish–style UI rendering ---
 
