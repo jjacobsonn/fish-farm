@@ -50,9 +50,7 @@ body {
   border-radius: 50%;
   font-size: 1.3rem;
   font-weight: bold;
-  background: linear-gradient(135deg, #e0f7fa 60%, #00cfff 100%);
-  color: #008891;
-  box-shadow: 0 2px 12px #00cfff33;
+  box-shadow: 0 2px 12px #219ebc33;
   border: none;
   display: flex;
   align-items: center;
@@ -62,9 +60,7 @@ body {
   cursor: pointer;
 }
 #back-to-start-btn.back-btn:hover, #back-to-start-btn.back-btn:focus {
-  background: linear-gradient(135deg, #00cfff 0%, #e0f7fa 100%);
-  color: #fff;
-  box-shadow: 0 4px 24px #00cfff88, 0 2px 12px #0003;
+  box-shadow: 0 4px 24px #219ebc88, 0 2px 12px #0003;
   transform: scale(1.08);
 }
 #back-to-start-btn.back-btn:active {
