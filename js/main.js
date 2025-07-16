@@ -16,6 +16,7 @@ const controlsModal = document.getElementById('controls-modal');
 const closeModal = document.getElementById('close-modal');
 const siteBg = document.getElementById('site-bg');
 const backToStartBtn = document.getElementById('back-to-start-btn');
+const messages = document.getElementById('messages');
 
 // Helper to create bubbles for start/instructions
 function createBubbles(container, num = 18) {
@@ -77,8 +78,8 @@ const fishEmojis = ['🐠', '🐟', '🐡', '🦑', '🦐', '🦀', '🐬', '�
 const decorEmojis = ['🌱', '🪨', '🏝️', '🪸', '🌊', '🪷', '🪵', '🧜‍♂️'];
 
 // Modal controls
-cogBtn.onclick = () => controlsModal.classList.remove('hidden');
-closeModal.onclick = () => controlsModal.classList.add('hidden');
+if (cogBtn) cogBtn.onclick = () => controlsModal.classList.remove('hidden');
+if (closeModal) closeModal.onclick = () => controlsModal.classList.add('hidden');
 
 // Render bubbles
 function renderBubbles() {
@@ -112,16 +113,217 @@ function renderFish(tank) {
 // Render decor
 function renderDecor(decor) {
   const decorLayer = document.getElementById('decor-layer');
-  decorLayer.innerHTML = '';
-  decor.forEach((d, i) => {
-    const emoji = decorEmojis[i % decorEmojis.length];
-    decorLayer.innerHTML += `<div class="text-3xl">${emoji}</div>`;
-  });
+  if (decorLayer) {
+    decorLayer.innerHTML = '';
+    decor.forEach((d, i) => {
+      const emoji = decorEmojis[i % decorEmojis.length];
+      decorLayer.innerHTML += `<div class="text-3xl">${emoji}</div>`;
+    });
+  }
 }
 
-// Render HUD
+// Render HUD with enhanced information
 function renderHUD(player) {
-  hud.innerHTML = `<span>Level: <b id='hud-level'>${player.level}</b></span> <span>XP: <b id='hud-xp'>${player.xp}</b></span> <span>Coins: <b id='hud-coins'>${player.coins}</b></span>`;
+  const tankStats = game.getTankStats();
+  hud.innerHTML = `
+    <span>Level: <b id='hud-level'>${player.level}</b></span> 
+    <span>XP: <b id='hud-xp'>${player.xp}</b></span> 
+    <span>Coins: <b id='hud-coins'>${player.coins}</b></span>
+    <span>Fish: <b>${tankStats.fishCount}</b></span>
+    <span>Value: <b>${tankStats.totalValue}</b></span>
+  `;
+}
+
+// Show message to user
+function showMessage(text, type = 'info') {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `message ${type} p-3 rounded-lg mb-2 text-center transition-opacity duration-500`;
+  messageDiv.textContent = text;
+  
+  // Style based on type
+  if (type === 'success') {
+    messageDiv.style.backgroundColor = '#10b981';
+    messageDiv.style.color = 'white';
+  } else if (type === 'error') {
+    messageDiv.style.backgroundColor = '#ef4444';
+    messageDiv.style.color = 'white';
+  } else {
+    messageDiv.style.backgroundColor = '#3b82f6';
+    messageDiv.style.color = 'white';
+  }
+  
+  messages.appendChild(messageDiv);
+  
+  // Remove message after 3 seconds
+  setTimeout(() => {
+    messageDiv.style.opacity = '0';
+    setTimeout(() => {
+      if (messageDiv.parentNode) {
+        messageDiv.parentNode.removeChild(messageDiv);
+      }
+    }, 500);
+  }, 3000);
+}
+
+// Create fish selection dropdown with costs
+function createFishDropdown() {
+  const availableFish = game.currentBiome.fish.filter(
+    fishName => !game.tank.some(f => f.name === fishName)
+  );
+  
+  if (availableFish.length === 0) {
+    showMessage('No more fish available in this biome!', 'error');
+    return;
+  }
+  
+  const dropdown = document.createElement('div');
+  dropdown.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+  dropdown.innerHTML = `
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-96 overflow-y-auto">
+      <h3 class="text-lg font-bold mb-4 text-gray-800">Buy Fish</h3>
+      <div class="text-sm text-gray-600 mb-4">Your coins: ${game.player.coins}</div>
+      <div class="space-y-2">
+        ${availableFish.map(fishName => {
+          const fishData = game.getFishData(fishName);
+          const canAfford = game.player.coins >= fishData.cost;
+          const biomeData = game.biomes.find(b => b.name === fishData.biome);
+          const levelUnlocked = !biomeData || game.player.level >= biomeData.unlock.level;
+          
+          return `
+            <button class="w-full text-left p-3 rounded-lg border hover:bg-gray-100 transition fish-option ${canAfford && levelUnlocked ? '' : 'opacity-50'}" data-fish="${fishName}" ${canAfford && levelUnlocked ? '' : 'disabled'}>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold">${fishName}</span>
+                  <div class="text-sm text-gray-600">
+                    Cost: ${fishData.cost} coins | Reward: ${fishData.baseReward} coins
+                    ${!levelUnlocked ? ` | Requires level ${biomeData.unlock.level}` : ''}
+                  </div>
+                </div>
+                <span class="text-sm ${canAfford && levelUnlocked ? 'text-green-600' : 'text-red-600'}">
+                  ${canAfford && levelUnlocked ? '✓' : '✗'}
+                </span>
+              </div>
+            </button>
+          `;
+        }).join('')}
+      </div>
+      <button class="w-full mt-4 py-2 px-4 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition close-dropdown">Cancel</button>
+    </div>
+  `;
+  
+  document.body.appendChild(dropdown);
+  
+  // Add event listeners
+  dropdown.querySelectorAll('.fish-option').forEach(btn => {
+    btn.onclick = () => {
+      const fishName = btn.dataset.fish;
+      const fishData = game.getFishData(fishName);
+      
+      if (game.player.coins < fishData.cost) {
+        showMessage(`Not enough coins! ${fishName} costs ${fishData.cost} coins.`, 'error');
+        return;
+      }
+      
+      if (game.addFish(fishName)) {
+        showMessage(`Purchased ${fishName} for ${fishData.cost} coins!`, 'success');
+        render();
+      } else {
+        showMessage('Failed to purchase fish!', 'error');
+      }
+      document.body.removeChild(dropdown);
+    };
+  });
+  
+  dropdown.querySelector('.close-dropdown').onclick = () => {
+    document.body.removeChild(dropdown);
+  };
+  
+  dropdown.onclick = (e) => {
+    if (e.target === dropdown) {
+      document.body.removeChild(dropdown);
+    }
+  };
+}
+
+// Create decor selection dropdown with enhanced info
+function createDecorDropdown() {
+  const availableDecor = game.currentBiome.decor.filter(
+    decorName => !game.decor.some(d => d.name === decorName)
+  );
+  
+  if (availableDecor.length === 0) {
+    showMessage('No more decor available in this biome!', 'error');
+    return;
+  }
+  
+  const dropdown = document.createElement('div');
+  dropdown.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+  dropdown.innerHTML = `
+    <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 max-h-96 overflow-y-auto">
+      <h3 class="text-lg font-bold mb-4 text-gray-800">Buy Decor</h3>
+      <div class="text-sm text-gray-600 mb-4">Your coins: ${game.player.coins}</div>
+      <div class="space-y-2">
+        ${availableDecor.map(decorName => {
+          const decorData = game.getDecorData(decorName);
+          const canAfford = game.player.coins >= decorData.unlock.cost;
+          const levelUnlocked = game.player.level >= decorData.unlock.level;
+          
+          return `
+            <button class="w-full text-left p-3 rounded-lg border hover:bg-gray-100 transition decor-option ${canAfford && levelUnlocked ? '' : 'opacity-50'}" data-decor="${decorName}" ${canAfford && levelUnlocked ? '' : 'disabled'}>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-semibold">${decorName}</span>
+                  <div class="text-sm text-gray-600">
+                    Cost: ${decorData.unlock.cost} coins
+                    ${decorData.effect.happiness ? `| +${decorData.effect.happiness} happiness` : ''}
+                    ${decorData.effect.cleanliness ? `| +${decorData.effect.cleanliness} cleanliness` : ''}
+                    ${!levelUnlocked ? ` | Requires level ${decorData.unlock.level}` : ''}
+                  </div>
+                </div>
+                <span class="text-sm ${canAfford && levelUnlocked ? 'text-green-600' : 'text-red-600'}">
+                  ${canAfford && levelUnlocked ? '✓' : '✗'}
+                </span>
+              </div>
+            </button>
+          `;
+        }).join('')}
+      </div>
+      <button class="w-full mt-4 py-2 px-4 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition close-dropdown">Cancel</button>
+    </div>
+  `;
+  
+  document.body.appendChild(dropdown);
+  
+  // Add event listeners
+  dropdown.querySelectorAll('.decor-option').forEach(btn => {
+    btn.onclick = () => {
+      const decorName = btn.dataset.decor;
+      const decorData = game.getDecorData(decorName);
+      
+      if (game.player.coins < decorData.unlock.cost) {
+        showMessage(`Not enough coins! ${decorName} costs ${decorData.unlock.cost} coins.`, 'error');
+        return;
+      }
+      
+      if (game.addDecor(decorName)) {
+        showMessage(`Purchased ${decorName} for ${decorData.unlock.cost} coins!`, 'success');
+        render();
+      } else {
+        showMessage('Failed to purchase decor!', 'error');
+      }
+      document.body.removeChild(dropdown);
+    };
+  });
+  
+  dropdown.querySelector('.close-dropdown').onclick = () => {
+    document.body.removeChild(dropdown);
+  };
+  
+  dropdown.onclick = (e) => {
+    if (e.target === dropdown) {
+      document.body.removeChild(dropdown);
+    }
+  };
 }
 
 // --- Game logic integration ---
@@ -137,44 +339,59 @@ function render() {
   renderHUD(game.player);
 }
 
-// Modal button actions
+// Button actions with enhanced functionality
 const feedBtn = document.getElementById('feed-btn');
 const cleanBtn = document.getElementById('clean-btn');
 const addDecorBtn = document.getElementById('add-decor-btn');
 const restBtn = document.getElementById('rest-btn');
 const addFishBtn = document.getElementById('add-fish-btn');
 
+// Add button click effects
+function addButtonEffect(button) {
+  button.addEventListener('click', function() {
+    this.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      this.style.transform = 'scale(1)';
+    }, 150);
+  });
+}
+
+// Apply effects to all buttons
+[feedBtn, cleanBtn, addDecorBtn, restBtn, addFishBtn].forEach(addButtonEffect);
+
 feedBtn.onclick = () => {
-  game.feedFish();
+  if (game.tank.length === 0) {
+    showMessage('No fish to feed! Buy some fish first.', 'error');
+    return;
+  }
+  
+  const coinsEarned = game.feedFish();
+  showMessage(`Fed all fish! Earned ${coinsEarned} coins.`, 'success');
   render();
-  controlsModal.classList.add('hidden');
 };
+
 cleanBtn.onclick = () => {
-  game.cleanTank();
+  if (game.tank.length === 0) {
+    showMessage('No fish to clean! Buy some fish first.', 'error');
+    return;
+  }
+  
+  const coinsEarned = game.cleanTank();
+  showMessage(`Cleaned all fish! Earned ${coinsEarned} coins.`, 'success');
   render();
-  controlsModal.classList.add('hidden');
 };
+
 addDecorBtn.onclick = () => {
-  // Add first available decor from current biome
-  const decorName = game.currentBiome.decor.find(
-    name => !game.decor.some(d => d.name === name)
-  );
-  if (decorName) game.addDecor(decorName);
-  render();
-  controlsModal.classList.add('hidden');
+  createDecorDropdown();
 };
+
 restBtn.onclick = () => {
-  // Stub: could add rest logic
-  controlsModal.classList.add('hidden');
+  showMessage('Fish are resting peacefully...', 'info');
+  // Could add rest logic here in the future
 };
+
 addFishBtn.onclick = () => {
-  // Add first available fish from current biome not already in tank
-  const fishName = game.currentBiome.fish.find(
-    name => !game.tank.some(f => f.name === name)
-  );
-  if (fishName) game.addFish(fishName);
-  render();
-  controlsModal.classList.add('hidden');
+  createFishDropdown();
 };
 
 render();
