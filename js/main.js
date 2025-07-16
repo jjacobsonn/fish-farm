@@ -9,6 +9,11 @@ const aquariumEffectHowto = document.getElementById('aquarium-effect-howto');
 const hud = document.getElementById('hud');
 const aquarium = document.getElementById('aquarium');
 const gameContainer = document.getElementById('game-container');
+const fishLayer = document.getElementById('fish-layer');
+const bubbleLayer = document.getElementById('bubble-layer');
+const cogBtn = document.getElementById('cog-btn');
+const controlsModal = document.getElementById('controls-modal');
+const closeModal = document.getElementById('close-modal');
 
 // Helper to create bubbles for start/instructions
 function createBubbles(container, num = 18) {
@@ -57,15 +62,11 @@ const fishEmojis = ['🐠', '🐟', '🐡', '🦑', '🦐', '🦀', '🐬', '�
 const decorEmojis = ['🌱', '🪨', '🏝️', '🪸', '🌊', '🪷', '🪵', '🧜‍♂️'];
 
 // Modal controls
-const cogBtn = document.getElementById('cog-btn');
-const controlsModal = document.getElementById('controls-modal');
-const closeModal = document.getElementById('close-modal');
 cogBtn.onclick = () => controlsModal.classList.remove('hidden');
 closeModal.onclick = () => controlsModal.classList.add('hidden');
 
 // Render bubbles
 function renderBubbles() {
-  const bubbleLayer = document.getElementById('bubble-layer');
   bubbleLayer.innerHTML = '';
   for (let i = 0; i < 16; i++) {
     const size = 12 + Math.random() * 24;
@@ -78,7 +79,6 @@ function renderBubbles() {
 
 // Render fish
 function renderFish(tank) {
-  const fishLayer = document.getElementById('fish-layer');
   fishLayer.innerHTML = '';
   tank.forEach((f, i) => {
     const emoji = fishEmojis[i % fishEmojis.length];
@@ -106,9 +106,7 @@ function renderDecor(decor) {
 
 // Render HUD
 function renderHUD(player) {
-  document.getElementById('hud-level').textContent = player.level;
-  document.getElementById('hud-xp').textContent = player.xp;
-  document.getElementById('hud-coins').textContent = player.coins;
+  hud.innerHTML = `<span>Level: <b id='hud-level'>${player.level}</b></span> <span>XP: <b id='hud-xp'>${player.xp}</b></span> <span>Coins: <b id='hud-coins'>${player.coins}</b></span>`;
 }
 
 // --- Game logic integration ---
@@ -121,7 +119,6 @@ game.init();
 function render() {
   renderBubbles();
   renderFish(game.tank);
-  renderDecor(game.decor);
   renderHUD(game.player);
 }
 

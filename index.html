@@ -29,27 +29,27 @@
   </div>
   <div id="game-container" style="display:none;">
     <header>
-      <h1>Fish Farm</h1>
-      <div id="player-stats"></div>
-      <div id="hud" style="display:none;"></div> <!-- Added HUD element -->
+      <div id="hud"></div>
     </header>
     <main>
-      <section id="tank-section">
-        <h2>Current Tank</h2>
-        <div id="aquarium" style="display:none;"></div> <!-- Added Aquarium element -->
-        <div id="tank"></div>
-      </section>
-      <section id="decor-section">
-        <h2>Decor</h2>
-        <div id="decor"></div>
-      </section>
-      <section id="actions">
-        <button id="feed-btn">Feed Fish</button>
-        <button id="clean-btn">Clean Tank</button>
-        <button id="rest-btn">Rest</button>
-        <button id="add-fish-btn">Add Fish</button>
-        <button id="add-decor-btn">Add Decor</button>
-      </section>
+      <div id="aquarium" class="aquarium">
+        <div id="bubble-layer"></div>
+        <div id="fish-layer"></div>
+        <button id="cog-btn" class="cog-btn" title="Game Controls">⚙️</button>
+      </div>
+      <div id="controls-modal" class="hidden">
+        <div class="modal-content">
+          <button id="close-modal" class="close-modal">✖️</button>
+          <button id="feed-btn">🍽️ Feed Fish</button>
+          <button id="clean-btn">🧽 Clean Tank</button>
+          <button id="rest-btn">💤 Rest</button>
+          <button id="add-fish-btn">🐟 Add Fish</button>
+          <button id="add-decor-btn">🪸 Add Decor</button>
+        </div>
+      </div>
+      <section id="decor-section" style="display:none;"></section>
+      <section id="tank-section" style="display:none;"></section>
+      <section id="actions" style="display:none;"></section>
     </main>
     <footer>
       <div id="messages"></div>
