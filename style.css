@@ -68,6 +68,18 @@ h1 {
   text-align: center;
 }
 
+.game-title {
+  font-family: 'Nunito', Arial, sans-serif;
+  font-size: 2.7em;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 24px #0008, 0 1px 0 #008891;
+  text-align: center;
+  margin-top: 2.2rem;
+  margin-bottom: 1.5rem;
+}
+
 /***** BUBBLES *****/
 .bubble {
   position: absolute;
@@ -307,6 +319,7 @@ h1 {
   align-items: center;
   font-weight: 700;
 }
+#hud { display: none !important; }
 .cog-btn {
   display: flex;
   align-items: center;
@@ -425,4 +438,8 @@ h1 {
     font-size: 1.1em;
     padding: 0.8rem 1.2rem;
   }
+} 
+
+.aquarium > div:not(#bubble-layer):not(#fish-layer) {
+  display: none !important;
 } 
