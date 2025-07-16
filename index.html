@@ -57,10 +57,14 @@
     <div id="site-bg" class="w-full" style="display:none;">
       <div id="game-container" class="w-full flex flex-col items-center space-y-4" style="display:none;">
         <div class="max-w-screen-lg w-full mx-auto px-4 flex flex-col items-center">
-          <!-- Top navigation bar with back button -->
+          <!-- Top navigation bar with back button and coins -->
           <div class="w-full flex justify-between items-center mt-6 mb-3 relative">
             <button id="back-to-start-btn" class="back-btn rounded-full w-12 h-12 bg-[#219ebc] text-white shadow font-bold flex items-center justify-center hover:bg-[#1a7a8f] transition absolute left-0 top-0 z-10" title="Back to Start">&#8592;</button>
             <div class="game-title text-3xl font-bold text-center w-full">Fish Farm</div>
+            <div id="coins-display" class="absolute right-0 top-0 z-10 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold px-4 py-2 rounded-full shadow-lg flex items-center space-x-2">
+              <span class="text-lg">🪙</span>
+              <span id="coins-amount" class="text-lg">100</span>
+            </div>
           </div>
           
           <!-- Main content area -->
@@ -74,14 +78,14 @@
                 <div id="bubble-layer"></div>
                 <div id="fish-layer"></div>
               </div>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full" style="gap: 12px;">
                 <button id="feed-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Feed Fish</button>
                 <button id="clean-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Clean Tank</button>
                 <button id="rest-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Rest</button>
                 <button id="add-decor-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Add Decor</button>
               </div>
-              <div class="w-full">
-                <button id="add-fish-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#06d6a0] shadow-md hover:scale-105 transition mt-1">Add Fish</button>
+              <div class="w-full mt-3">
+                <button id="add-fish-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#06d6a0] shadow-md hover:scale-105 transition">Add Fish</button>
               </div>
               <section id="decor-section" style="display:none;"></section>
               <section id="tank-section" style="display:none;"></section>

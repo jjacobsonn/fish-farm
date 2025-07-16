@@ -125,13 +125,36 @@ function renderDecor(decor) {
 // Render HUD with enhanced information
 function renderHUD(player) {
   const tankStats = game.getTankStats();
+  
+  // Update the prominent coins display in the header
+  const coinsAmount = document.getElementById('coins-amount');
+  if (coinsAmount) {
+    const oldCoins = parseInt(coinsAmount.textContent) || 0;
+    const newCoins = player.coins;
+    
+    coinsAmount.textContent = newCoins;
+    
+    // Add animation if coins changed
+    if (oldCoins !== newCoins) {
+      animateCoinChange(coinsAmount);
+    }
+  }
+  
+  // Update the HUD with other stats (coins are now prominently displayed in header)
   hud.innerHTML = `
     <span>Level: <b id='hud-level'>${player.level}</b></span> 
     <span>XP: <b id='hud-xp'>${player.xp}</b></span> 
-    <span>Coins: <b id='hud-coins'>${player.coins}</b></span>
     <span>Fish: <b>${tankStats.fishCount}</b></span>
     <span>Value: <b>${tankStats.totalValue}</b></span>
   `;
+}
+
+// Animate coin amount changes
+function animateCoinChange(coinsElement) {
+  coinsElement.classList.add('coin-change');
+  setTimeout(() => {
+    coinsElement.classList.remove('coin-change');
+  }, 600);
 }
 
 // Show message to user
@@ -207,7 +230,7 @@ function createFishDropdown() {
           `;
         }).join('')}
       </div>
-      <button class="w-full mt-4 py-2 px-4 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition close-dropdown">Cancel</button>
+      <button class="w-full mt-4 py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition close-dropdown">Cancel</button>
     </div>
   `;
   
@@ -288,7 +311,7 @@ function createDecorDropdown() {
           `;
         }).join('')}
       </div>
-      <button class="w-full mt-4 py-2 px-4 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition close-dropdown">Cancel</button>
+      <button class="w-full mt-4 py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition close-dropdown">Cancel</button>
     </div>
   `;
   
@@ -349,9 +372,9 @@ const addFishBtn = document.getElementById('add-fish-btn');
 // Add button click effects
 function addButtonEffect(button) {
   button.addEventListener('click', function() {
-    this.style.transform = 'scale(0.95)';
+    this.style.transform = 'scale(0.98)';
     setTimeout(() => {
-      this.style.transform = 'scale(1)';
+      this.style.transform = '';
     }, 150);
   });
 }
