@@ -1,158 +1,169 @@
-import { Game } from './game/Game.js';
-import { startGameLoop } from './game/GameLoop.js';
-
-// Start screen logic
+// --- Start/Instructions Screen Logic ---
 const startScreen = document.getElementById('start-screen');
-const gameContainer = document.getElementById('game-container');
+const howToPlayScreen = document.getElementById('how-to-play-screen');
 const startBtn = document.getElementById('start-btn');
 const howToPlayBtn = document.getElementById('how-to-play-btn');
-const howToPlayScreen = document.getElementById('how-to-play-screen');
 const backBtn = document.getElementById('back-btn');
 const aquariumEffect = document.getElementById('aquarium-effect');
 const aquariumEffectHowto = document.getElementById('aquarium-effect-howto');
+const hud = document.getElementById('hud');
+const aquarium = document.getElementById('aquarium');
+const gameContainer = document.getElementById('game-container');
 
+// Helper to create bubbles for start/instructions
 function createBubbles(container, num = 18) {
   container.innerHTML = '';
   for (let i = 0; i < num; i++) {
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    const size = Math.random() * 30 + 20;
-    bubble.style.width = `${size}px`;
-    bubble.style.height = `${size}px`;
-    bubble.style.left = `${Math.random() * 100}%`;
-    bubble.style.animationDuration = `${4 + Math.random() * 4}s`;
-    bubble.style.opacity = 0.5 + Math.random() * 0.5;
-    container.appendChild(bubble);
+    const size = 16 + Math.random() * 32;
+    const left = Math.random() * 98;
+    const duration = 4 + Math.random() * 5;
+    const delay = Math.random() * 3;
+    container.innerHTML += `<div class="bubble" style="width:${size}px;height:${size}px;left:${left}%;animation-duration:${duration}s;animation-delay:${delay}s;"></div>`;
   }
 }
+createBubbles(aquariumEffect, 18);
+createBubbles(aquariumEffectHowto, 18);
 
-createBubbles(aquariumEffect);
-createBubbles(aquariumEffectHowto);
-
-gameContainer.style.display = 'none';
-startScreen.style.display = 'flex';
+// Hide game UI by default
+startScreen.style.display = '';
 howToPlayScreen.style.display = 'none';
+gameContainer.style.display = 'none';
+hud.style.display = 'none';
+aquarium.style.display = 'none';
 
+// Navigation logic
 startBtn.onclick = () => {
   startScreen.style.display = 'none';
-  gameContainer.style.display = 'block';
   howToPlayScreen.style.display = 'none';
-  startFishFarm();
+  gameContainer.style.display = '';
+  hud.style.display = '';
+  aquarium.style.display = '';
 };
-
 howToPlayBtn.onclick = () => {
   startScreen.style.display = 'none';
   howToPlayScreen.style.display = 'flex';
   gameContainer.style.display = 'none';
 };
-
 backBtn.onclick = () => {
   howToPlayScreen.style.display = 'none';
   startScreen.style.display = 'flex';
   gameContainer.style.display = 'none';
 };
 
-function startFishFarm() {
-  const game = new Game();
-  game.init();
+// --- Tap Tap Fish–style UI rendering ---
 
-  function render() {
-    // Player stats
-    const stats = document.getElementById('player-stats');
-    stats.textContent = `Level: ${game.player.level} | XP: ${game.player.xp} | Coins: ${game.player.coins}`;
+// Emoji pools
+const fishEmojis = ['🐠', '🐟', '🐡', '🦑', '🦐', '🦀', '🐬', '🐳', '🐋'];
+const decorEmojis = ['🌱', '🪨', '🏝️', '🪸', '🌊', '🪷', '🪵', '🧜‍♂️'];
 
-    // Tank
-    const tank = document.getElementById('tank');
-    if (game.tank.length) {
-      tank.innerHTML = game.tank.map(f => `<div>${f.name} (😊${f.happiness})</div>`).join('');
-    } else {
-      tank.innerHTML = '<div>Your tank is empty! Use the "Add Fish" dropdown to get started.</div>';
-    }
+// Modal controls
+const cogBtn = document.getElementById('cog-btn');
+const controlsModal = document.getElementById('controls-modal');
+const closeModal = document.getElementById('close-modal');
+cogBtn.onclick = () => controlsModal.classList.remove('hidden');
+closeModal.onclick = () => controlsModal.classList.add('hidden');
 
-    // Decor
-    const decor = document.getElementById('decor');
-    decor.innerHTML = game.decor.length
-      ? game.decor.map(d => `<div>${d.name}</div>`).join('')
-      : '<div>No decor in tank.</div>';
-
-    // Add Fish button dropdown
-    const addFishBtn = document.getElementById('add-fish-btn');
-    addFishBtn.onclick = null;
-    addFishBtn.innerHTML = 'Add Fish';
-    // Create a dropdown for fish selection
-    let select = document.getElementById('fish-select');
-    if (select) select.remove();
-    select = document.createElement('select');
-    select.id = 'fish-select';
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = '-- Select Fish --';
-    select.appendChild(defaultOption);
-    game.currentBiome.fish.forEach(fishName => {
-      const option = document.createElement('option');
-      option.value = fishName;
-      option.textContent = fishName;
-      select.appendChild(option);
-    });
-    addFishBtn.parentNode.insertBefore(select, addFishBtn);
-    select.onchange = () => {
-      if (select.value) {
-        if (game.addFish(select.value)) {
-          messages.textContent = `Added fish: ${select.value}`;
-        } else {
-          messages.textContent = `Could not add fish: ${select.value}`;
-        }
-        select.value = '';
-        render();
-      }
-    };
+// Render bubbles
+function renderBubbles() {
+  const bubbleLayer = document.getElementById('bubble-layer');
+  bubbleLayer.innerHTML = '';
+  for (let i = 0; i < 16; i++) {
+    const size = 12 + Math.random() * 24;
+    const left = Math.random() * 98;
+    const duration = 3 + Math.random() * 5;
+    const delay = Math.random() * 3;
+    bubbleLayer.innerHTML += `<div class="bubble" style="width:${size}px;height:${size}px;left:${left}%;animation-duration:${duration}s;animation-delay:${delay}s;"></div>`;
   }
+}
 
-  // Button actions
-  const feedBtn = document.getElementById('feed-btn');
-  const cleanBtn = document.getElementById('clean-btn');
-  const addDecorBtn = document.getElementById('add-decor-btn');
-  const restBtn = document.getElementById('rest-btn');
-  const messages = document.getElementById('messages');
+// Render fish
+function renderFish(tank) {
+  const fishLayer = document.getElementById('fish-layer');
+  fishLayer.innerHTML = '';
+  tank.forEach((f, i) => {
+    const emoji = fishEmojis[i % fishEmojis.length];
+    const top = 20 + Math.random() * 60;
+    const left = 10 + Math.random() * 75;
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    const style = `top:${top}%;left:${left}%;animation-direction:${direction === 1 ? 'normal' : 'reverse'};`;
+    fishLayer.innerHTML += `
+      <div class="fish-emoji fish-dropin" style="${style}" title="${f.name}">
+        ${emoji}
+      </div>
+    `;
+  });
+}
 
-  // Show welcome message on first load
-  if (!game.tank.length && !game.decor.length) {
-    messages.textContent = 'Welcome to Fish Farm! Start by adding a fish to your tank.';
-  }
+// Render decor
+function renderDecor(decor) {
+  const decorLayer = document.getElementById('decor-layer');
+  decorLayer.innerHTML = '';
+  decor.forEach((d, i) => {
+    const emoji = decorEmojis[i % decorEmojis.length];
+    decorLayer.innerHTML += `<div class="text-3xl">${emoji}</div>`;
+  });
+}
 
-  feedBtn.onclick = () => {
-    const coins = game.feedFish();
-    messages.textContent = `You fed your fish and earned ${coins} coins!`;
-    render();
-  };
+// Render HUD
+function renderHUD(player) {
+  document.getElementById('hud-level').textContent = player.level;
+  document.getElementById('hud-xp').textContent = player.xp;
+  document.getElementById('hud-coins').textContent = player.coins;
+}
 
-  cleanBtn.onclick = () => {
-    const coins = game.cleanTank();
-    messages.textContent = `You cleaned the tank and earned ${coins} coins!`;
-    render();
-  };
+// --- Game logic integration ---
+import { Game } from './game/Game.js';
+import { startGameLoop } from './game/GameLoop.js';
 
-  addDecorBtn.onclick = () => {
-    // For demo, add first available decor from current biome
-    const decorName = game.currentBiome.decor.find(
-      name => !game.decor.some(d => d.name === name)
-    );
-    if (decorName) {
-      if (game.addDecor(decorName)) {
-        messages.textContent = `Added decor: ${decorName}`;
-      } else {
-        messages.textContent = `Not enough coins for ${decorName}`;
-      }
-    } else {
-      messages.textContent = 'All decor added!';
-    }
-    render();
-  };
+const game = new Game();
+game.init();
 
-  restBtn.onclick = () => {
-    messages.textContent = 'Your fish are resting... (stub)';
-  };
+function render() {
+  renderBubbles();
+  renderFish(game.tank);
+  renderDecor(game.decor);
+  renderHUD(game.player);
+}
 
+// Modal button actions
+const feedBtn = document.getElementById('feed-btn');
+const cleanBtn = document.getElementById('clean-btn');
+const addDecorBtn = document.getElementById('add-decor-btn');
+const restBtn = document.getElementById('rest-btn');
+const addFishBtn = document.getElementById('add-fish-btn');
+
+feedBtn.onclick = () => {
+  game.feedFish();
   render();
-  startGameLoop(game, render);
-} 
+  controlsModal.classList.add('hidden');
+};
+cleanBtn.onclick = () => {
+  game.cleanTank();
+  render();
+  controlsModal.classList.add('hidden');
+};
+addDecorBtn.onclick = () => {
+  // Add first available decor from current biome
+  const decorName = game.currentBiome.decor.find(
+    name => !game.decor.some(d => d.name === name)
+  );
+  if (decorName) game.addDecor(decorName);
+  render();
+  controlsModal.classList.add('hidden');
+};
+restBtn.onclick = () => {
+  // Stub: could add rest logic
+  controlsModal.classList.add('hidden');
+};
+addFishBtn.onclick = () => {
+  // Add first available fish from current biome not already in tank
+  const fishName = game.currentBiome.fish.find(
+    name => !game.tank.some(f => f.name === name)
+  );
+  if (fishName) game.addFish(fishName);
+  render();
+  controlsModal.classList.add('hidden');
+};
+
+render();
+startGameLoop(game, render); 

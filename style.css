@@ -1,177 +1,159 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #d0f4f7;
+  min-height: 100vh;
   margin: 0;
   padding: 0;
+  font-family: 'Nunito', Arial, sans-serif;
+  background: linear-gradient(to bottom, #0f3057 0%, #008891 60%, #00cfff 100%);
 }
+
+#start-screen, #how-to-play-screen, #game-container {
+  background: transparent;
+}
+
 #start-screen, #how-to-play-screen {
+  min-height: 100vh;
+  width: 100vw;
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(to bottom, #0f3057 80%, #008891 100%);
+  top: 0; left: 0;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  color: #fff;
 }
-#start-screen h1 {
-  font-size: 3em;
-  margin-bottom: 30px;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 8px #0008;
+
+/***** BUTTONS *****/
+#start-btn, #how-to-play-btn, #back-btn,
+#feed-btn, #clean-btn, #rest-btn, #add-fish-btn, #add-decor-btn {
+  display: block;
+  width: 260px;
+  margin: 18px auto 0 auto;
+  padding: 20px 0;
+  font-size: 1.35em;
+  font-weight: bold;
+  border: 2px solid #00cfff;
+  border-radius: 12px;
+  background: #e0f7fa;
+  color: #00796b;
+  cursor: pointer;
+  box-shadow: 0 2px 12px #00cfff33;
+  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
+  letter-spacing: 1px;
 }
-#start-btn, #how-to-play-btn {
-  padding: 18px 48px;
-  font-size: 1.3em;
-  border: none;
-  border-radius: 8px;
+#start-btn:hover, #how-to-play-btn:hover, #back-btn:hover,
+#feed-btn:hover, #clean-btn:hover, #rest-btn:hover, #add-fish-btn:hover, #add-decor-btn:hover {
   background: #00cfff;
   color: #fff;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #0004;
-  transition: background 0.2s;
-  margin-bottom: 18px;
+  border-color: #008891;
+  box-shadow: 0 4px 24px #00cfff88, 0 2px 12px #0003;
+  transform: translateY(-2px) scale(1.04);
 }
-#start-btn:hover, #how-to-play-btn:hover {
-  background: #008891;
+
+/***** GAME TITLE *****/
+h1 {
+  font-size: 3.2em;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 24px #0008, 0 1px 0 #008891;
+  margin-bottom: 24px;
+  margin-top: 0;
+  text-align: center;
 }
-#aquarium-effect, #aquarium-effect-howto {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: -1;
-  overflow: hidden;
-}
+
+/***** BUBBLES *****/
 .bubble {
   position: absolute;
-  bottom: -60px;
-  background: rgba(255,255,255,0.7);
+  bottom: -80px;
   border-radius: 50%;
-  opacity: 0.7;
-  animation: bubbleUp 6s linear infinite;
+  background: rgba(255,255,255,0.5);
+  pointer-events: none;
+  animation: bubbleRise linear infinite;
+  z-index: 0;
 }
-@keyframes bubbleUp {
+@keyframes bubbleRise {
   0% { transform: translateY(0) scale(1); opacity: 0.7; }
   80% { opacity: 0.8; }
-  100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+  100% { transform: translateY(-120vh) scale(1.2); opacity: 0; }
 }
-#game-container {
-  max-width: 900px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
-  padding: 28px;
-  display: block;
-}
-header, footer {
-  text-align: center;
-  margin-bottom: 22px;
-}
-#player-stats {
-  margin-top: 10px;
-  font-size: 1.1em;
-}
-main {
-  display: flex;
-  gap: 24px;
-}
-#tank-section, #decor-section {
-  flex: 1;
-  background: #e6f9fa;
-  border-radius: 10px;
-  padding: 18px;
-  min-height: 220px;
-}
-#actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-left: 24px;
-}
-button {
-  padding: 12px 22px;
-  border: none;
-  border-radius: 6px;
-  background: #1ca9c9;
-  color: #fff;
-  font-size: 1em;
+
+/* Fish */
+.fish-emoji {
+  position: absolute;
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 8px #0003);
   cursor: pointer;
-  transition: background 0.2s;
+  user-select: none;
+  transition: transform 0.3s;
+  z-index: 20;
+  animation: fishSwimX 8s linear infinite alternate;
 }
-button:hover {
-  background: #127a99;
+@keyframes fishSwimX {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(120px); }
 }
-#messages {
-  min-height: 24px;
-  color: #1b7e5a;
-  font-weight: bold;
+.fish-dropin {
+  animation: fishDropIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
 }
+@keyframes fishDropIn {
+  0% { transform: scale(0.2) translateY(-80px); opacity: 0; }
+  80% { transform: scale(1.1) translateY(10px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Modal backdrop */
+#controls-modal {
+  backdrop-filter: blur(2px);
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  #aquarium {
+    height: 260px !important;
+    min-height: 180px;
+  }
+  #hud {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  #cog-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+  }
+} 
+
+/* Instructions Card Styling */
 #instructions-card {
-  background: rgba(0, 168, 145, 0.35);
-  border: 2px solid #00cfff;
+  background: rgba(224, 247, 250, 0.97); /* light aqua, matches button bg */
   border-radius: 18px;
-  box-shadow: 0 4px 24px #0003;
-  color: #fff;
-  max-width: 440px;
-  width: 90vw;
-  margin: 0 auto 18px auto;
-  padding: 36px 32px 24px 32px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1.15em;
-}
-#instructions-card h2 {
-  margin-top: 0;
-  margin-bottom: 18px;
-  color: #fff;
-  letter-spacing: 1px;
-  text-shadow: 0 1px 4px #0006;
-}
-#instructions-card ul {
-  margin: 0 0 24px 0;
-  padding-left: 22px;
-  color: #e0f7fa;
-  font-size: 1.08em;
+  box-shadow: 0 6px 32px #00cfff44, 0 2px 12px #00889122;
+  border: 2px solid #00cfff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  max-width: 420px;
+  margin: 0 auto 2rem auto;
+  font-family: 'Nunito', Arial, sans-serif;
+  color: #00796b;
   text-align: left;
 }
-#instructions {
-  background: rgba(0, 168, 145, 0.35);
-  border: 1.5px solid #00cfff;
-  border-radius: 14px;
-  margin: 24px auto 32px auto;
-  padding: 18px 30px;
-  color: #fff;
-  max-width: 420px;
-  box-shadow: 0 2px 12px #0002;
-}
-#instructions h3 {
+#instructions-card h2 {
+  font-size: 2em;
+  font-weight: 800;
+  color: #008891;
   margin-top: 0;
-  color: #fff;
+  margin-bottom: 1rem;
   letter-spacing: 1px;
-  text-shadow: 0 1px 4px #0006;
+  text-shadow: 0 2px 12px #00cfff22;
+  text-align: center;
 }
-#instructions ul {
+#instructions-card ul {
+  padding-left: 1.2em;
   margin: 0;
-  padding-left: 22px;
-  color: #e0f7fa;
-  font-size: 1.08em;
 }
-#back-btn {
-  display: block;
-  margin: 28px auto 0 auto;
-  width: 220px;
-  padding: 18px 48px;
-  font-size: 1.3em;
-  border: none;
-  border-radius: 8px;
-  background: #00cfff;
-  color: #fff;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #0004;
-  transition: background 0.2s;
-}
-#back-btn:hover {
-  background: #008891;
+#instructions-card li {
+  font-size: 1.15em;
+  margin-bottom: 0.8em;
+  line-height: 1.5;
+  font-family: 'Nunito', Arial, sans-serif;
+  color: #005662;
 } 
