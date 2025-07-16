@@ -1,0 +1,177 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #d0f4f7;
+  margin: 0;
+  padding: 0;
+}
+#start-screen, #how-to-play-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, #0f3057 80%, #008891 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: #fff;
+}
+#start-screen h1 {
+  font-size: 3em;
+  margin-bottom: 30px;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px #0008;
+}
+#start-btn, #how-to-play-btn {
+  padding: 18px 48px;
+  font-size: 1.3em;
+  border: none;
+  border-radius: 8px;
+  background: #00cfff;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0004;
+  transition: background 0.2s;
+  margin-bottom: 18px;
+}
+#start-btn:hover, #how-to-play-btn:hover {
+  background: #008891;
+}
+#aquarium-effect, #aquarium-effect-howto {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+.bubble {
+  position: absolute;
+  bottom: -60px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: bubbleUp 6s linear infinite;
+}
+@keyframes bubbleUp {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  80% { opacity: 0.8; }
+  100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+}
+#game-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  padding: 28px;
+  display: block;
+}
+header, footer {
+  text-align: center;
+  margin-bottom: 22px;
+}
+#player-stats {
+  margin-top: 10px;
+  font-size: 1.1em;
+}
+main {
+  display: flex;
+  gap: 24px;
+}
+#tank-section, #decor-section {
+  flex: 1;
+  background: #e6f9fa;
+  border-radius: 10px;
+  padding: 18px;
+  min-height: 220px;
+}
+#actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-left: 24px;
+}
+button {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 6px;
+  background: #1ca9c9;
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #127a99;
+}
+#messages {
+  min-height: 24px;
+  color: #1b7e5a;
+  font-weight: bold;
+}
+#instructions-card {
+  background: rgba(0, 168, 145, 0.35);
+  border: 2px solid #00cfff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px #0003;
+  color: #fff;
+  max-width: 440px;
+  width: 90vw;
+  margin: 0 auto 18px auto;
+  padding: 36px 32px 24px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.15em;
+}
+#instructions-card h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px #0006;
+}
+#instructions-card ul {
+  margin: 0 0 24px 0;
+  padding-left: 22px;
+  color: #e0f7fa;
+  font-size: 1.08em;
+  text-align: left;
+}
+#instructions {
+  background: rgba(0, 168, 145, 0.35);
+  border: 1.5px solid #00cfff;
+  border-radius: 14px;
+  margin: 24px auto 32px auto;
+  padding: 18px 30px;
+  color: #fff;
+  max-width: 420px;
+  box-shadow: 0 2px 12px #0002;
+}
+#instructions h3 {
+  margin-top: 0;
+  color: #fff;
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px #0006;
+}
+#instructions ul {
+  margin: 0;
+  padding-left: 22px;
+  color: #e0f7fa;
+  font-size: 1.08em;
+}
+#back-btn {
+  display: block;
+  margin: 28px auto 0 auto;
+  width: 220px;
+  padding: 18px 48px;
+  font-size: 1.3em;
+  border: none;
+  border-radius: 8px;
+  background: #00cfff;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0004;
+  transition: background 0.2s;
+}
+#back-btn:hover {
+  background: #008891;
+} 
