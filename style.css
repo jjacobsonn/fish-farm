@@ -1,5 +1,5 @@
 html, body {
-  font-family: 'Nunito', Arial, sans-serif;
+  font-family: 'Inter', 'Outfit', 'Nunito', Arial, sans-serif;
 }
 body {
   background: #0e1a2b;
@@ -29,31 +29,83 @@ body {
   justify-content: center;
 }
 
-/***** BUTTONS *****/
-#start-btn, #how-to-play-btn, #back-btn,
-#feed-btn, #clean-btn, #rest-btn, #add-fish-btn, #add-decor-btn {
-  display: block;
-  width: 260px;
-  margin: 18px auto 0 auto;
-  padding: 20px 0;
-  font-size: 1.35em;
-  font-weight: bold;
-  border: 2px solid #00cfff;
+/* --- GAME BUTTONS --- */
+.game-btn {
+  width: 200px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', 'Inter', 'Nunito Sans', Arial, sans-serif;
+  font-size: 1.18em;
+  font-weight: 800;
+  border: none;
   border-radius: 12px;
-  background: #e0f7fa;
-  color: #00796b;
-  cursor: pointer;
-  box-shadow: 0 2px 12px #00cfff33;
-  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
-  letter-spacing: 1px;
-}
-#start-btn:hover, #how-to-play-btn:hover, #back-btn:hover,
-#feed-btn:hover, #clean-btn:hover, #rest-btn:hover, #add-fish-btn:hover, #add-decor-btn:hover {
-  background: #00cfff;
+  background: linear-gradient(90deg, #00cfff 0%, #009cd6 100%);
   color: #fff;
-  border-color: #008891;
+  box-shadow: 0 4px 18px #00cfff55, 0 1.5px 6px #009cd655;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+  margin: 0.5rem auto;
+  outline: none;
+  user-select: none;
+}
+.game-btn--secondary {
+  background: linear-gradient(90deg, #e0f7fa 0%, #b3e5fc 100%);
+  color: #009cd6;
+  box-shadow: 0 2px 10px #b3e5fc55, 0 1px 4px #00cfff33;
+}
+.game-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px #00cfff33;
+}
+.game-btn:hover, .game-btn:focus {
+  transform: scale(1.06);
+  box-shadow: 0 6px 32px #00cfff99, 0 2px 12px #009cd655;
+  background: linear-gradient(90deg, #00e0ff 0%, #00bfff 100%);
+  color: #fff;
+}
+.game-btn--secondary:hover, .game-btn--secondary:focus {
+  background: linear-gradient(90deg, #b3e5fc 0%, #e0f7fa 100%);
+  color: #009cd6;
+  box-shadow: 0 6px 24px #b3e5fc99, 0 2px 12px #00cfff55;
+}
+
+/* Remove old button styles for consistency */
+/* (Removed 'all: unset' and 'composes' to restore button appearance) */
+
+/* Ensure all buttons in controls, modals, and main UI use .game-btn */
+/* (No longer using 'composes', just rely on .game-btn class in HTML) */
+
+/* Special case for round icon button */
+#back-to-start-btn.back-btn {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  min-height: 48px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #e0f7fa 60%, #00cfff 100%);
+  color: #008891;
+  box-shadow: 0 2px 12px #00cfff33;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+  z-index: 50;
+}
+#back-to-start-btn.back-btn:hover, #back-to-start-btn.back-btn:focus {
+  background: linear-gradient(135deg, #00cfff 0%, #e0f7fa 100%);
+  color: #fff;
   box-shadow: 0 4px 24px #00cfff88, 0 2px 12px #0003;
-  transform: translateY(-2px) scale(1.04);
+  transform: scale(1.08);
+}
+#back-to-start-btn.back-btn:active {
+  transform: scale(0.94);
 }
 
 /***** GAME TITLE *****/
@@ -78,6 +130,10 @@ h1 {
   text-align: center;
   margin-top: 3.7rem;
   margin-bottom: 1.5rem;
+}
+
+h1, .game-title {
+  font-family: 'Outfit', 'Poppins', 'Fredoka', sans-serif;
 }
 
 /***** BUBBLES *****/
@@ -144,26 +200,33 @@ h1 {
 
 /* Instructions Card Styling */
 #instructions-card {
-  background: rgba(224, 247, 250, 0.97); /* light aqua, matches button bg */
-  border-radius: 18px;
-  box-shadow: 0 6px 32px #00cfff44, 0 2px 12px #00889122;
+  background: linear-gradient(120deg, #e0f7fa 0%, #b3e5fc 100%);
+  border-radius: 12px;
+  box-shadow: 0 6px 32px #00cfff55, 0 2px 12px #009cd655;
   border: 2px solid #00cfff;
   padding: 2.5rem 2rem 2rem 2rem;
   max-width: 420px;
   margin: 0 auto 2rem auto;
-  font-family: 'Nunito', Arial, sans-serif;
-  color: #00796b;
+  font-family: 'Poppins', 'Inter', 'Nunito Sans', Arial, sans-serif;
+  color: #009cd6;
   text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+#instructions-card:hover, #instructions-card:focus {
+  transform: scale(1.02);
+  box-shadow: 0 10px 48px #00cfff99, 0 4px 24px #009cd655;
+  outline: none;
 }
 #instructions-card h2 {
   font-size: 2em;
   font-weight: 800;
-  color: #008891;
+  color: #009cd6;
   margin-top: 0;
   margin-bottom: 1rem;
   letter-spacing: 1px;
   text-shadow: 0 2px 12px #00cfff22;
   text-align: center;
+  font-family: 'Poppins', 'Inter', 'Nunito Sans', Arial, sans-serif;
 }
 #instructions-card ul {
   padding-left: 1.2em;
@@ -173,8 +236,8 @@ h1 {
   font-size: 1.15em;
   margin-bottom: 0.8em;
   line-height: 1.5;
-  font-family: 'Nunito', Arial, sans-serif;
-  color: #005662;
+  font-family: 'Poppins', 'Inter', 'Nunito Sans', Arial, sans-serif;
+  color: #0079a1;
 } 
 
 /* --- Tap Tap Fish–style Aquarium UI --- */
@@ -238,25 +301,6 @@ h1 {
 }
 .controls-row-center {
   justify-content: center;
-}
-.controls-bar button {
-  flex: 1 1 0;
-  min-width: 180px;
-  max-width: 240px;
-  padding: 1.1rem 0;
-  font-size: 1.18em;
-  font-family: 'Nunito', Arial, sans-serif;
-  font-weight: 700;
-  border: 2px solid #00cfff;
-  border-radius: 12px;
-  background: #e0f7fa;
-  color: #00796b;
-  cursor: pointer;
-  box-shadow: 0 2px 12px #00cfff33;
-  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
-  letter-spacing: 1px;
-  margin-bottom: 0;
-  margin-top: 0;
 }
 .controls-bar button:hover {
   background: #00cfff;
@@ -454,25 +498,6 @@ h1 {
   font-size: 1.5rem;
   color: #008891;
   cursor: pointer;
-}
-#controls-modal button {
-  width: 220px;
-  margin: 0.2rem 0;
-  padding: 1rem 0;
-  font-size: 1.15em;
-  font-weight: bold;
-  border: 2px solid #00cfff;
-  border-radius: 12px;
-  background: #e0f7fa;
-  color: #00796b;
-  cursor: pointer;
-  box-shadow: 0 2px 12px #00cfff33;
-  transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
-  letter-spacing: 1px;
-  display: flex;
-  align-items: center;
-  gap: 0.7em;
-  justify-content: center;
 }
 #controls-modal button:hover {
   background: #00cfff;

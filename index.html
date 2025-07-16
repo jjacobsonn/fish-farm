@@ -5,14 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fish Farm</title>
   <link href="https://fonts.googleapis.com/css?family=Nunito:400,700,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="start-screen">
     <div id="aquarium-effect"></div>
     <h1>Fish Farm</h1>
-    <button id="start-btn">Start Game</button>
-    <button id="how-to-play-btn">How to Play</button>
+    <button id="start-btn" class="game-btn">Start Game</button>
+    <button id="how-to-play-btn" class="game-btn game-btn--secondary">How to Play</button>
   </div>
   <div id="how-to-play-screen" style="display:none;">
     <div id="aquarium-effect-howto"></div>
@@ -26,11 +28,11 @@
         <li>Your progress is saved automatically.</li>
       </ul>
     </div>
-    <button id="back-btn">Back</button>
+    <button id="back-btn" class="game-btn game-btn--secondary">Back</button>
   </div>
   <div id="site-bg" style="display:none;">
     <div id="game-container" style="display:none;">
-      <button id="back-to-start-btn" class="back-btn" title="Back to Start">&#8592;</button>
+      <button id="back-to-start-btn" class="back-btn game-btn game-btn--secondary" title="Back to Start">&#8592;</button>
       <div class="game-title">Fish Farm</div>
       <header>
         <div id="hud"></div>
@@ -43,15 +45,15 @@
         </div>
         <div class="controls-bar">
           <div class="controls-row">
-            <button id="feed-btn">Feed Fish</button>
-            <button id="clean-btn">Clean Tank</button>
+            <button id="feed-btn" class="game-btn">Feed Fish</button>
+            <button id="clean-btn" class="game-btn">Clean Tank</button>
           </div>
           <div class="controls-row">
-            <button id="rest-btn">Rest</button>
-            <button id="add-fish-btn">Add Fish</button>
+            <button id="rest-btn" class="game-btn">Rest</button>
+            <button id="add-fish-btn" class="game-btn">Add Fish</button>
           </div>
           <div class="controls-row controls-row-center">
-            <button id="add-decor-btn">Add Decor</button>
+            <button id="add-decor-btn" class="game-btn">Add Decor</button>
           </div>
         </div>
         <section id="decor-section" style="display:none;"></section>
