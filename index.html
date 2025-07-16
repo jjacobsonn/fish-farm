@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fish Farm</title>
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,700,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -27,33 +28,32 @@
     </div>
     <button id="back-btn">Back</button>
   </div>
-  <div id="game-container" style="display:none;">
-    <header>
-      <div id="hud"></div>
-    </header>
-    <main>
-      <div id="aquarium" class="aquarium">
-        <div id="bubble-layer"></div>
-        <div id="fish-layer"></div>
-        <button id="cog-btn" class="cog-btn" title="Game Controls">⚙️</button>
-      </div>
-      <div id="controls-modal" class="hidden">
-        <div class="modal-content">
-          <button id="close-modal" class="close-modal">✖️</button>
-          <button id="feed-btn">🍽️ Feed Fish</button>
-          <button id="clean-btn">🧽 Clean Tank</button>
-          <button id="rest-btn">💤 Rest</button>
-          <button id="add-fish-btn">🐟 Add Fish</button>
-          <button id="add-decor-btn">🪸 Add Decor</button>
+  <div id="site-bg" style="display:none;">
+    <div id="game-container" style="display:none;">
+      <header>
+        <div id="hud"></div>
+        <div class="hud-spacer"></div>
+      </header>
+      <main>
+        <div id="aquarium" class="aquarium">
+          <div id="bubble-layer"></div>
+          <div id="fish-layer"></div>
         </div>
-      </div>
-      <section id="decor-section" style="display:none;"></section>
-      <section id="tank-section" style="display:none;"></section>
-      <section id="actions" style="display:none;"></section>
-    </main>
-    <footer>
-      <div id="messages"></div>
-    </footer>
+        <div class="controls-bar">
+          <button id="feed-btn">Feed Fish</button>
+          <button id="clean-btn">Clean Tank</button>
+          <button id="rest-btn">Rest</button>
+          <button id="add-fish-btn">Add Fish</button>
+          <button id="add-decor-btn">Add Decor</button>
+        </div>
+        <section id="decor-section" style="display:none;"></section>
+        <section id="tank-section" style="display:none;"></section>
+        <section id="actions" style="display:none;"></section>
+      </main>
+      <footer>
+        <div id="messages"></div>
+      </footer>
+    </div>
   </div>
   <script type="module" src="js/main.js"></script>
 </body>

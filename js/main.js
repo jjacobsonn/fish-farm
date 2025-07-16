@@ -14,6 +14,7 @@ const bubbleLayer = document.getElementById('bubble-layer');
 const cogBtn = document.getElementById('cog-btn');
 const controlsModal = document.getElementById('controls-modal');
 const closeModal = document.getElementById('close-modal');
+const siteBg = document.getElementById('site-bg');
 
 // Helper to create bubbles for start/instructions
 function createBubbles(container, num = 18) {
@@ -33,6 +34,7 @@ createBubbles(aquariumEffectHowto, 18);
 startScreen.style.display = '';
 howToPlayScreen.style.display = 'none';
 gameContainer.style.display = 'none';
+siteBg.style.display = 'none';
 hud.style.display = 'none';
 aquarium.style.display = 'none';
 
@@ -40,6 +42,7 @@ aquarium.style.display = 'none';
 startBtn.onclick = () => {
   startScreen.style.display = 'none';
   howToPlayScreen.style.display = 'none';
+  siteBg.style.display = '';
   gameContainer.style.display = '';
   hud.style.display = '';
   aquarium.style.display = '';
@@ -47,11 +50,13 @@ startBtn.onclick = () => {
 howToPlayBtn.onclick = () => {
   startScreen.style.display = 'none';
   howToPlayScreen.style.display = 'flex';
+  siteBg.style.display = 'none';
   gameContainer.style.display = 'none';
 };
 backBtn.onclick = () => {
   howToPlayScreen.style.display = 'none';
   startScreen.style.display = 'flex';
+  siteBg.style.display = 'none';
   gameContainer.style.display = 'none';
 };
 
@@ -83,7 +88,7 @@ function renderFish(tank) {
   tank.forEach((f, i) => {
     const emoji = fishEmojis[i % fishEmojis.length];
     const top = 20 + Math.random() * 60;
-    const left = 10 + Math.random() * 75;
+    const left = 2 + Math.random() * 90; // wider range for wider tank
     const direction = Math.random() > 0.5 ? 1 : -1;
     const style = `top:${top}%;left:${left}%;animation-direction:${direction === 1 ? 'normal' : 'reverse'};`;
     fishLayer.innerHTML += `

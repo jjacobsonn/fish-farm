@@ -1,11 +1,18 @@
-body {
-  min-height: 100vh;
-  margin: 0;
-  padding: 0;
+html, body {
   font-family: 'Nunito', Arial, sans-serif;
-  background: linear-gradient(to bottom, #0f3057 0%, #008891 60%, #00cfff 100%);
 }
-
+body {
+  background: #0e1a2b;
+}
+#site-bg {
+  background: none;
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
 #start-screen, #how-to-play-screen, #game-container {
   background: transparent;
 }
@@ -90,7 +97,7 @@ h1 {
 }
 @keyframes fishSwimX {
   0% { transform: translateX(0); }
-  100% { transform: translateX(120px); }
+  100% { transform: translateX(320px); }
 }
 .fish-dropin {
   animation: fishDropIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
@@ -160,21 +167,80 @@ h1 {
 
 /* --- Tap Tap Fish–style Aquarium UI --- */
 .aquarium {
-  position: relative;
-  width: 100%;
-  max-width: 900px;
-  min-height: 400px;
-  height: 48vh;
-  margin: 2.5rem auto 0 auto;
+  width: 80vw;
+  max-width: 1000px;
+  height: 440px;
+  min-height: 340px;
+  margin: 0 auto;
+  margin-bottom: 2rem;
   background: linear-gradient(180deg, #00cfff 0%, #008891 60%, #0f3057 100%);
   border-radius: 2.5rem;
   overflow: hidden;
   box-shadow: 0 8px 40px #00cfff33, 0 2px 12px #00889122;
   z-index: 10;
+  position: relative;
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  transition: min-height 0.3s, height 0.3s, border-radius 0.3s;
 }
+@media (max-width: 1100px) {
+  .aquarium {
+    max-width: 98vw;
+    height: 320px;
+    border-radius: 1.5rem;
+  }
+}
+@media (max-width: 700px) {
+  .aquarium {
+    height: 200px;
+    border-radius: 1rem;
+    margin: 1.2rem auto 1.2rem auto;
+  }
+}
+@media (max-width: 500px) {
+  .aquarium {
+    width: 98vw;
+    max-width: 100vw;
+    height: 140px;
+    border-radius: 0.7rem;
+  }
+}
+.controls-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2.5rem;
+  width: 100%;
+  max-width: 1000px;
+}
+@media (max-width: 700px) {
+  .controls-bar {
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+}
+.hud-spacer {
+  height: 2.5rem;
+}
+.cog-btn, #controls-modal, .modal-content, .close-modal { display: none !important; }
+
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  min-height: 100vh;
+}
+
+@keyframes fishSwimX {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(320px); }
+}
+
 #bubble-layer {
   position: absolute;
   left: 0; top: 0; width: 100%; height: 100%;
@@ -213,7 +279,7 @@ h1 {
 }
 @keyframes fishSwimX {
   0% { transform: translateX(0); }
-  100% { transform: translateX(120px); }
+  100% { transform: translateX(320px); }
 }
 .fish-dropin {
   animation: fishDropIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
@@ -242,25 +308,22 @@ h1 {
   font-weight: 700;
 }
 .cog-btn {
-  position: absolute;
-  top: 1.2rem;
-  right: 1.2rem;
-  width: 3.2rem;
-  height: 3.2rem;
-  border-radius: 50%;
-  background: #e0f7fa;
-  border: 2px solid #00cfff;
-  box-shadow: 0 2px 12px #00cfff33;
-  font-size: 2rem;
-  color: #008891;
-  cursor: pointer;
-  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.7em;
+  font-size: 1.3em;
+  font-weight: 700;
+  padding: 1.1rem 2.2rem;
+  border-radius: 2.5rem;
+  background: #e0f7fa;
+  border: 2px solid #00cfff;
+  color: #008891;
+  box-shadow: 0 2px 12px #00cfff33;
+  cursor: pointer;
   transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s, transform 0.15s;
 }
-.cog-btn:hover {
+.cog-btn:hover, .cog-btn:focus {
   background: #00cfff;
   color: #fff;
   border-color: #008891;
@@ -352,5 +415,14 @@ h1 {
     max-width: 320px;
     font-size: 1em;
     padding: 0.8rem 0;
+  }
+  .controls-bar {
+    max-width: 98vw;
+    padding: 0.7rem 0 1.1rem 0;
+    margin: 1.2rem auto 0 auto;
+  }
+  .cog-btn {
+    font-size: 1.1em;
+    padding: 0.8rem 1.2rem;
   }
 } 
