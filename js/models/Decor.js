@@ -1,9 +1,10 @@
 export class Decor {
-  constructor({ name, biome, effect, unlock }) {
+  constructor({ name, biome, effect, cost, unlockLevel }) {
     this.name = name;
     this.biome = biome;
-    this.effect = effect || {}; // { happiness, cleanliness, etc. }
-    this.unlock = unlock || {}; // { level, cost }
+    this.effect = effect || {}; // { happiness, environment, etc. }
+    this.cost = cost || 0;
+    this.unlockLevel = unlockLevel || 1;
   }
 
   applyEffect(target) {

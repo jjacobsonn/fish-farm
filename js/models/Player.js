@@ -4,7 +4,7 @@ export class Player {
     this.level = data.level || 1;
     this.xp = data.xp || 0;
     this.inventory = data.inventory || { fish: [], decor: [], food: {} };
-    this.unlockedBiomes = data.unlockedBiomes || ["Freshwater"];
+    this.unlockedBiomes = data.unlockedBiomes || ["Basic"];
     this.equipment = data.equipment || [];
   }
 
@@ -42,6 +42,15 @@ export class Player {
 
   addFish(fish) {
     this.inventory.fish.push(fish);
+  }
+
+  removeFish(fishName) {
+    const fishIndex = this.inventory.fish.findIndex(f => f.name === fishName);
+    if (fishIndex >= 0) {
+      this.inventory.fish.splice(fishIndex, 1);
+      return true;
+    }
+    return false;
   }
 
   addDecor(decor) {

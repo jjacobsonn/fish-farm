@@ -245,9 +245,8 @@ function showFishInfo(fish, event) {
 }
 
 function getNextBiomeName() {
-  const biomes = ['Freshwater', 'Jungle', 'Coral Reef', 'Deep Sea', 'Fantasy'];
-  const currentIndex = biomes.indexOf(game.currentBiome.name);
-  return currentIndex < biomes.length - 1 ? biomes[currentIndex + 1] : 'Max Level';
+  // Since we only have one Basic biome now, progression is just level-based
+  return 'Max Level';
 }
 
 // Enhanced vitals dropdown with better error handling and display
@@ -558,22 +557,22 @@ function createFishDropdown() {
       <div class="space-y-2">
         ${availableFish.map(fish => {
           const canAfford = game.player.coins >= fish.cost;
-          const levelUnlocked = game.player.level >= (fish.level || 1);
+          const levelUnlocked = game.player.level >= (fish.unlockLevel || 1);
           const alreadyOwned = game.tank.some(f => f.name === fish.name);
           
           return `
-            <button class="w-full text-left p-3 rounded-lg border hover:bg-gray-100 transition fish-option ${canAfford && levelUnlocked && !alreadyOwned ? '' : 'opacity-50'}" data-fish="${fish.name}" ${canAfford && levelUnlocked && !alreadyOwned ? '' : 'disabled'}>
+            <button class="w-full text-left p-3 rounded-lg border transition fish-option ${canAfford && levelUnlocked && !alreadyOwned ? 'hover:bg-gray-100 border-gray-300' : 'opacity-50 cursor-not-allowed border-gray-200 bg-gray-100'}" data-fish="${fish.name}" ${canAfford && levelUnlocked && !alreadyOwned ? '' : 'disabled'}>
               <div class="flex items-center justify-between">
                 <div>
                   <span class="font-semibold">${fish.name}</span>
                   <div class="text-sm text-gray-600">
                     Cost: ${fish.cost} coins | Reward: ${fish.baseReward} coins per care
-                    ${!levelUnlocked ? ` | Requires level ${fish.level}` : ''}
+                    ${!levelUnlocked ? ` | Requires level ${fish.unlockLevel}` : ''}
                     ${alreadyOwned ? ' | Already owned' : ''}
                   </div>
                 </div>
-                <span class="text-sm ${canAfford && levelUnlocked && !alreadyOwned ? 'text-green-600' : 'text-red-600'}">
-                  ${canAfford && levelUnlocked && !alreadyOwned ? '✓' : '✗'}
+                <span class="text-sm font-medium ${canAfford && levelUnlocked && !alreadyOwned ? 'text-green-600' : 'text-gray-400'}">
+                  ${canAfford && levelUnlocked && !alreadyOwned ? 'Available' : 'Unavailable'}
                 </span>
               </div>
             </button>
@@ -589,21 +588,17 @@ function createFishDropdown() {
   // Add event listeners
   dropdown.querySelectorAll('.fish-option').forEach(btn => {
     btn.onclick = () => {
+      if (btn.disabled) return;
+      
       const fishName = btn.dataset.fish;
-      const fishData = game.getFishData(fishName);
+      const purchaseSystem = new PurchaseSystem(game);
+      const result = purchaseSystem.purchaseFish(fishName);
       
-      if (game.player.coins < fishData.cost) {
-        showMessage(`Not enough coins! ${fishName} costs ${fishData.cost} coins.`, 'error');
-        return;
-      }
-      
-      const purchaseResult = game.addFish(fishName);
-      
-      if (purchaseResult) {
-        showMessage(`Purchased ${fishName} for ${fishData.cost} coins! 🐠`, 'success');
+      if (result.success) {
+        showMessage(result.message, 'success');
         render();
       } else {
-        showMessage('Failed to purchase fish!', 'error');
+        showMessage(result.message, 'error');
       }
       document.body.removeChild(dropdown);
     };
@@ -639,10 +634,10 @@ function createFoodDropdown() {
       <div class="space-y-2">
         ${availableFood.map(food => {
           const canAfford = game.player.coins >= food.cost;
-          const levelUnlocked = game.player.level >= food.unlock.level;
+          const levelUnlocked = game.player.level >= food.unlockLevel;
           
           return `
-            <button class="w-full text-left p-3 rounded-lg border hover:bg-gray-100 transition food-option ${canAfford && levelUnlocked ? '' : 'opacity-50'}" data-food="${food.name}" ${canAfford && levelUnlocked ? '' : 'disabled'}>
+            <button class="w-full text-left p-3 rounded-lg border transition food-option ${canAfford && levelUnlocked ? 'hover:bg-gray-100 border-gray-300' : 'opacity-50 cursor-not-allowed border-gray-200 bg-gray-100'}" data-food="${food.name}" ${canAfford && levelUnlocked ? '' : 'disabled'}>
               <div class="flex items-center justify-between">
                 <div>
                   <span class="font-semibold">${food.name}</span>
@@ -650,11 +645,11 @@ function createFoodDropdown() {
                     Cost: ${food.cost} coins
                     ${food.effect.hunger ? `| +${food.effect.hunger} hunger` : ''}
                     ${food.effect.happiness ? `| +${food.effect.happiness} happiness` : ''}
-                    ${!levelUnlocked ? ` | Requires level ${food.unlock.level}` : ''}
+                    ${!levelUnlocked ? ` | Requires level ${food.unlockLevel}` : ''}
                   </div>
                 </div>
-                <span class="text-sm ${canAfford && levelUnlocked ? 'text-green-600' : 'text-red-600'}">
-                  ${canAfford && levelUnlocked ? '✓' : '✗'}
+                <span class="text-sm font-medium ${canAfford && levelUnlocked ? 'text-green-600' : 'text-gray-400'}">
+                  ${canAfford && levelUnlocked ? 'Available' : 'Unavailable'}
                 </span>
               </div>
             </button>
@@ -670,22 +665,18 @@ function createFoodDropdown() {
   // Add event listeners
   dropdown.querySelectorAll('.food-option').forEach(btn => {
     btn.onclick = () => {
+      if (btn.disabled) return;
+      
       console.log('Food option clicked:', btn.dataset.food); // DEBUG LOG
       const foodName = btn.dataset.food;
-      const foodData = game.getFoodData(foodName);
+      const purchaseSystem = new PurchaseSystem(game);
+      const result = purchaseSystem.purchaseFood(foodName, 1);
       
-      if (game.player.coins < foodData.cost) {
-        showMessage(`Not enough coins! ${foodName} costs ${foodData.cost} coins.`, 'error');
-        return;
-      }
-      
-      const purchaseResult = game.purchaseFood(foodName);
-      
-      if (purchaseResult) {
-        showMessage(`Purchased ${foodName} for ${foodData.cost} coins! Food added to inventory.`, 'success');
+      if (result.success) {
+        showMessage(result.message, 'success');
         render();
       } else {
-        showMessage('Failed to purchase food!', 'error');
+        showMessage(result.message, 'error');
       }
       document.body.removeChild(dropdown);
     };
@@ -836,25 +827,23 @@ function createDecorDropdown() {
       <div class="text-sm text-gray-600 mb-4">Your coins: ${game.player.coins}</div>
       <div class="space-y-2">
         ${availableDecor.map(decor => {
-          const canAfford = game.player.coins >= decor.unlock.cost;
-          const levelUnlocked = game.player.level >= decor.unlock.level;
+          const canAfford = game.player.coins >= decor.cost;
+          const levelUnlocked = game.player.level >= decor.unlockLevel;
           
           return `
-            <button class="w-full text-left p-3 rounded-lg border hover:bg-gray-100 transition decor-option ${canAfford && levelUnlocked ? '' : 'opacity-50'}" data-decor="${decor.name}" ${canAfford && levelUnlocked ? '' : 'disabled'}>
+            <button class="w-full text-left p-3 rounded-lg border transition decor-option ${canAfford && levelUnlocked ? 'hover:bg-gray-100 border-gray-300' : 'opacity-50 cursor-not-allowed border-gray-200 bg-gray-100'}" data-decor="${decor.name}" ${canAfford && levelUnlocked ? '' : 'disabled'}>
               <div class="flex items-center justify-between">
                 <div>
                   <span class="font-semibold">${decor.name}</span>
                   <div class="text-sm text-gray-600">
-                    Cost: ${decor.unlock.cost} coins
+                    Cost: ${decor.cost} coins
                     ${decor.effect.happiness ? `| +${decor.effect.happiness} happiness` : ''}
-                    ${decor.effect.cleanliness ? `| +${decor.effect.cleanliness} cleanliness` : ''}
-                    ${decor.effect.coinBonus ? `| +${Math.round(decor.effect.coinBonus * 100)}% coin bonus` : ''}
-                    ${decor.effect.xpBonus ? `| +${Math.round(decor.effect.xpBonus * 100)}% XP bonus` : ''}
-                    ${!levelUnlocked ? ` | Requires level ${decor.unlock.level}` : ''}
+                    ${decor.effect.environment ? `| +${decor.effect.environment} environment` : ''}
+                    ${!levelUnlocked ? ` | Requires level ${decor.unlockLevel}` : ''}
                   </div>
                 </div>
-                <span class="text-sm ${canAfford && levelUnlocked ? 'text-green-600' : 'text-red-600'}">
-                  ${canAfford && levelUnlocked ? '✓' : '✗'}
+                <span class="text-sm font-medium ${canAfford && levelUnlocked ? 'text-green-600' : 'text-gray-400'}">
+                  ${canAfford && levelUnlocked ? 'Available' : 'Unavailable'}
                 </span>
               </div>
             </button>
@@ -870,21 +859,17 @@ function createDecorDropdown() {
   // Add event listeners
   dropdown.querySelectorAll('.decor-option').forEach(btn => {
     btn.onclick = () => {
+      if (btn.disabled) return;
+      
       const decorName = btn.dataset.decor;
-      const decorData = game.getDecorData(decorName);
+      const purchaseSystem = new PurchaseSystem(game);
+      const result = purchaseSystem.purchaseDecor(decorName);
       
-      if (game.player.coins < decorData.unlock.cost) {
-        showMessage(`Not enough coins! ${decorName} costs ${decorData.unlock.cost} coins.`, 'error');
-        return;
-      }
-      
-      const purchaseResult = game.addDecor(decorName);
-      
-      if (purchaseResult) {
-        showMessage(`Purchased ${decorName} for ${decorData.unlock.cost} coins! 🏺`, 'success');
+      if (result.success) {
+        showMessage(result.message, 'success');
         render();
       } else {
-        showMessage('Failed to purchase decor!', 'error');
+        showMessage(result.message, 'error');
       }
       document.body.removeChild(dropdown);
     };
@@ -905,6 +890,7 @@ function createDecorDropdown() {
 import { Game } from './game/Game.js';
 import { startGameLoop } from './game/GameLoop.js';
 import { assetManager } from './utils/AssetManager.js';
+import { PurchaseSystem } from './utils/purchaseSystem.js';
 import { fishData } from './data/fishData.js';
 import { decorData } from './data/decorData.js';
 
@@ -942,6 +928,7 @@ function initializeButtons() {
   const buyFoodBtn = document.getElementById('buy-food-btn');
   const addFishBtn = document.getElementById('add-fish-btn');
   const viewVitalsBtn = document.getElementById('view-vitals-btn');
+  const clearTankBtn = document.getElementById('clear-tank-btn');
 
   // Debug: Check if buttons are found
   console.log('=== BUTTON INITIALIZATION ===');
@@ -951,6 +938,7 @@ function initializeButtons() {
   console.log('Clean button:', cleanBtn);
   console.log('Add decor button:', addDecorBtn);
   console.log('Add fish button:', addFishBtn);
+  console.log('Clear tank button:', clearTankBtn);
   console.log('Game object:', game);
   console.log('Game tank length:', game?.tank?.length);
   console.log('=== END BUTTON INIT ===');
@@ -971,7 +959,7 @@ function initializeButtons() {
   }
 
   // Apply effects to all buttons
-  [feedBtn, cleanBtn, addDecorBtn, buyFoodBtn, addFishBtn, viewVitalsBtn].forEach(addButtonEffect);
+  [feedBtn, cleanBtn, addDecorBtn, buyFoodBtn, addFishBtn, viewVitalsBtn, clearTankBtn].forEach(addButtonEffect);
 
 
 
@@ -1065,6 +1053,22 @@ function initializeButtons() {
       createFishDropdown();
     };
   }
+
+  if (clearTankBtn) {
+    clearTankBtn.onclick = () => {
+      if (game.tank.length === 0 && game.decor.length === 0) {
+        showMessage('Tank is already empty!', 'error');
+        return;
+      }
+      
+      const confirmClear = confirm('Are you sure you want to clear all fish and decor from your tank? This action cannot be undone.');
+      if (confirmClear) {
+        game.clearTank();
+        showMessage('Tank cleared successfully!', 'success');
+        render();
+      }
+    };
+  }
 }
 
 // Test function to verify everything is working
@@ -1082,7 +1086,8 @@ function testGameFunctionality() {
     viewVitalsBtn: document.getElementById('view-vitals-btn'),
     cleanBtn: document.getElementById('clean-btn'),
     addDecorBtn: document.getElementById('add-decor-btn'),
-    addFishBtn: document.getElementById('add-fish-btn')
+    addFishBtn: document.getElementById('add-fish-btn'),
+    clearTankBtn: document.getElementById('clear-tank-btn')
   });
   console.log('=== END TEST ===');
 }

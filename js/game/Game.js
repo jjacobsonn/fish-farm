@@ -21,7 +21,7 @@ export class Game {
     // Load or create player
     const saved = loadState();
     this.player = saved ? new Player(saved.player) : new Player();
-    // Start with Freshwater biome
+    // Start with Basic biome
     this.currentBiome = new Biome(biomeData[0]);
     this.biomes = biomeData.map(b => new Biome(b));
     // Load tank and decor from save or start empty
@@ -41,6 +41,16 @@ export class Game {
     const fishData = this.getFishData(fishName);
     if (!fishData) return false;
     
+    // Check if fish is already in tank
+    if (this.tank.some(f => f.name === fishName)) {
+      return false;
+    }
+    
+    // Check level requirement
+    if (this.player.level < fishData.unlockLevel) {
+      return false;
+    }
+    
     if (this.player.spendCoins(fishData.cost)) {
       const fish = new Fish(fishData);
       this.tank.push(fish);
@@ -51,11 +61,30 @@ export class Game {
     return false;
   }
 
+  removeFish(fishName) {
+    const fishIndex = this.tank.findIndex(f => f.name === fishName);
+    if (fishIndex >= 0) {
+      this.tank.splice(fishIndex, 1);
+      this.player.removeFish(fishName);
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  clearTank() {
+    this.tank = [];
+    this.decor = [];
+    this.player.inventory.fish = [];
+    this.player.inventory.decor = [];
+    this.save();
+  }
+
   addDecor(decorName) {
     const decorData = this.getDecorData(decorName);
     if (!decorData) return false;
     
-    if (this.player.spendCoins(decorData.unlock.cost)) {
+    if (this.player.spendCoins(decorData.cost)) {
       const decor = new Decor(decorData);
       this.decor.push(decor);
       this.player.addDecor(decor);
@@ -148,21 +177,21 @@ export class Game {
   getAvailableFood() {
     return foodData.filter(food => 
       food.biome === this.currentBiome.name && 
-      this.player.level >= food.unlock.level
+      this.player.level >= food.unlockLevel
     );
   }
 
   // Get available fish for current level and biome
   getAvailableFish() {
     return fishData.filter(fish => 
-      this.player.level >= (fish.level || 1)
+      this.player.level >= (fish.unlockLevel || 1)
     );
   }
 
   // Get available decor for current level and biome  
   getAvailableDecor() {
     return decorData.filter(decor => 
-      this.player.level >= decor.unlock.level &&
+      this.player.level >= decor.unlockLevel &&
       !this.decor.some(d => d.name === decor.name)
     );
   }
@@ -191,7 +220,7 @@ export class Game {
       return sum + (fishData ? fishData.cost : 0);
     }, 0) + this.decor.reduce((sum, decor) => {
       const decorData = this.getDecorData(decor.name);
-      return sum + (decorData ? decorData.unlock.cost : 0);
+      return sum + (decorData ? decorData.cost : 0);
     }, 0);
 
     return {
