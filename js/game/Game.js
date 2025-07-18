@@ -223,12 +223,44 @@ export class Game {
       return sum + (decorData ? decorData.cost : 0);
     }, 0);
 
+    // Calculate average stats
+    const avgHappiness = this.tank.length > 0 ? 
+      this.tank.reduce((sum, fish) => sum + fish.happiness, 0) / this.tank.length : 0;
+    const avgHunger = this.tank.length > 0 ? 
+      this.tank.reduce((sum, fish) => sum + fish.hunger, 0) / this.tank.length : 0;
+    const avgCleanliness = this.tank.length > 0 ? 
+      this.tank.reduce((sum, fish) => sum + fish.cleanliness, 0) / this.tank.length : 0;
+
+    // Calculate decor bonuses
+    const decorHappinessBonus = this.decor.reduce((sum, decor) => {
+      const decorData = this.getDecorData(decor.name);
+      return sum + (decorData?.effect?.happiness || 0);
+    }, 0);
+
+    const decorEnvironmentBonus = this.decor.reduce((sum, decor) => {
+      const decorData = this.getDecorData(decor.name);
+      return sum + (decorData?.effect?.environment || 0);
+    }, 0);
+
+    // Calculate overall tank health including decor effects
+    const modifiedHappiness = Math.min(100, avgHappiness + decorHappinessBonus);
+    const modifiedCleanliness = Math.min(100, avgCleanliness + decorEnvironmentBonus);
+    const overallHealth = this.tank.length > 0 ? 
+      (modifiedHappiness + avgHunger + modifiedCleanliness) / 3 : 0;
+
     return {
       fishCount: this.tank.length,
       decorCount: this.decor.length,
       totalValue: totalValue,
-      averageHappiness: this.tank.length > 0 ? 
-        this.tank.reduce((sum, fish) => sum + fish.happiness, 0) / this.tank.length : 0
+      averageHappiness: avgHappiness,
+      averageHunger: avgHunger,
+      averageCleanliness: avgCleanliness,
+      modifiedHappiness: modifiedHappiness,
+      modifiedCleanliness: modifiedCleanliness,
+      decorHappinessBonus: decorHappinessBonus,
+      decorEnvironmentBonus: decorEnvironmentBonus,
+      overallHealth: overallHealth,
+      fishNeedingCare: this.tank.filter(fish => fish.needsCare()).length
     };
   }
 } 

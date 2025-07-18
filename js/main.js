@@ -251,169 +251,87 @@ function getNextBiomeName() {
 
 // Enhanced vitals dropdown with better error handling and display
 function createVitalsDropdown() {
+  console.log('Creating vitals dropdown...');
+  
   if (game.tank.length === 0) {
     showMessage('No fish in tank! Add some fish first to view vitals.', 'error');
     return;
   }
   
-  const dropdown = document.createElement('div');
-  dropdown.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-  
-  // Calculate overall tank health
-  const totalHealth = game.tank.reduce((sum, fish) => sum + fish.getHealthPercentage(), 0);
-  const avgHealth = totalHealth / game.tank.length;
-  
-  // Count fish that need care
-  const fishNeedingCare = game.tank.filter(fish => fish.needsCare()).length;
-  
-  // Calculate level progress
-  const levelProgress = (game.player.xp % (game.player.level * 100)) / (game.player.level * 100) * 100;
-  
-  // Calculate tank statistics
-  const tankHunger = game.tank.reduce((sum, fish) => sum + fish.hunger, 0) / game.tank.length;
-  const tankCleanliness = game.tank.reduce((sum, fish) => sum + fish.cleanliness, 0) / game.tank.length;
-  const tankHappiness = game.tank.reduce((sum, fish) => sum + fish.happiness, 0) / game.tank.length;
-  
-  dropdown.innerHTML = `
-    <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
-      <h3 class="text-xl font-bold mb-4 text-gray-800">Aquarium Vitals</h3>
-      
-      <!-- Overall Tank Health -->
-      <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Overall Tank Health</h4>
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-sm text-gray-600">Average Health:</span>
-          <span class="font-bold ${avgHealth > 70 ? 'text-green-600' : avgHealth > 40 ? 'text-yellow-600' : 'text-red-600'}">${Math.round(avgHealth)}%</span>
+  try {
+    const dropdown = document.createElement('div');
+    dropdown.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    
+    // Simple version first to test
+    dropdown.innerHTML = `
+      <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">Aquarium Vitals</h3>
+        
+        <div class="mb-4">
+          <h4 class="font-semibold text-gray-700 mb-2">Fish Count: ${game.tank.length}</h4>
+          <h4 class="font-semibold text-gray-700 mb-2">Decor Count: ${game.decor.length}</h4>
+          <h4 class="font-semibold text-gray-700 mb-2">Player Level: ${game.player.level}</h4>
+          <h4 class="font-semibold text-gray-700 mb-2">Player Coins: ${game.player.coins}</h4>
         </div>
-        <div class="progress-bar">
-          <div class="progress-fill progress-happiness" style="width: ${avgHealth}%"></div>
-        </div>
-        <div class="text-sm text-gray-600 mt-2">
-          ${fishNeedingCare} of ${game.tank.length} fish need attention
-        </div>
-      </div>
-      
-      <!-- Tank Vital Statistics -->
-      <div class="mb-6 p-4 bg-blue-50 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Tank Vital Statistics</h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <span class="text-sm text-gray-600">Tank Hunger Level:</span>
-            <div class="progress-bar" style="height: 8px;">
-              <div class="progress-fill progress-hunger" style="width: ${tankHunger}%"></div>
-            </div>
-            <span class="text-xs text-gray-500">${Math.round(tankHunger)}%</span>
-          </div>
-          <div>
-            <span class="text-sm text-gray-600">Tank Cleanliness:</span>
-            <div class="progress-bar" style="height: 8px;">
-              <div class="progress-fill progress-cleanliness" style="width: ${tankCleanliness}%"></div>
-            </div>
-            <span class="text-xs text-gray-500">${Math.round(tankCleanliness)}%</span>
-          </div>
-          <div>
-            <span class="text-sm text-gray-600">Tank Happiness:</span>
-            <div class="progress-bar" style="height: 8px;">
-              <div class="progress-fill progress-happiness" style="width: ${tankHappiness}%"></div>
-            </div>
-            <span class="text-xs text-gray-500">${Math.round(tankHappiness)}%</span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Individual Fish Stats -->
-      <div class="mb-6">
-        <h4 class="font-semibold text-gray-700 mb-3">Individual Fish Status</h4>
-        <div class="space-y-3">
-          ${game.tank.map((fish, index) => {
-            const health = fish.getHealthPercentage();
-            const needsCare = fish.needsCare();
-            return `
-              <div class="p-3 border rounded-lg ${needsCare ? 'border-red-300 bg-red-50' : 'border-green-300 bg-green-50'}">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-semibold">${fish.name}</span>
-                  <span class="text-sm ${needsCare ? 'text-red-600' : 'text-green-600'}">${Math.round(health)}%</span>
-                </div>
-                <div class="grid grid-cols-3 gap-2 text-xs">
-                  <div>
-                    <span class="text-gray-600">Happiness:</span>
-                    <div class="progress-bar" style="height: 6px;">
-                      <div class="progress-fill progress-happiness" style="width: ${fish.happiness}%"></div>
-                    </div>
+        
+        <!-- Individual Fish Stats -->
+        <div class="mb-6">
+          <h4 class="font-semibold text-gray-700 mb-3">Fish Status</h4>
+          <div class="space-y-2">
+            ${game.tank.map((fish, index) => {
+              const health = fish.getHealthPercentage();
+              const needsCare = fish.needsCare();
+              return `
+                <div class="p-3 border rounded-lg ${needsCare ? 'border-red-300 bg-red-50' : 'border-green-300 bg-green-50'}">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="font-semibold">${fish.name}</span>
+                    <span class="text-sm ${needsCare ? 'text-red-600' : 'text-green-600'}">${Math.round(health)}%</span>
                   </div>
-                  <div>
-                    <span class="text-gray-600">Hunger:</span>
-                    <div class="progress-bar" style="height: 6px;">
-                      <div class="progress-fill progress-hunger" style="width: ${fish.hunger}%"></div>
-                    </div>
-                  </div>
-                  <div>
-                    <span class="text-gray-600">Cleanliness:</span>
-                    <div class="progress-bar" style="height: 6px;">
-                      <div class="progress-fill progress-cleanliness" style="width: ${fish.cleanliness}%"></div>
-                    </div>
+                  <div class="text-sm text-gray-600">
+                    Happiness: ${fish.happiness}% | Hunger: ${fish.hunger}% | Cleanliness: ${fish.cleanliness}%
                   </div>
                 </div>
-              </div>
-            `;
-          }).join('')}
+              `;
+            }).join('')}
+          </div>
         </div>
+        
+        <button class="w-full py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition close-dropdown">Close</button>
       </div>
-      
-      <!-- Player Progress -->
-      <div class="mb-6 p-4 bg-blue-50 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Player Progress</h4>
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-sm text-gray-600">Level ${game.player.level}</span>
-          <span class="text-sm text-gray-600">${game.player.xp}/${game.player.level * 100} XP</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill progress-level" style="width: ${levelProgress}%"></div>
-        </div>
-        <div class="text-sm text-gray-600 mt-2">
-          Next: ${getNextBiomeName()}
-        </div>
-      </div>
-      
-      <!-- Food Inventory -->
-      <div class="mb-6 p-4 bg-yellow-50 rounded-lg">
-        <h4 class="font-semibold text-gray-700 mb-2">Food Inventory</h4>
-        ${Object.keys(game.player.inventory.food).length > 0 ? 
-          Object.entries(game.player.inventory.food).map(([foodName, quantity]) => `
-            <div class="flex justify-between text-sm">
-              <span>${foodName}</span>
-              <span class="font-semibold">${quantity}</span>
-            </div>
-          `).join('') :
-          '<div class="text-sm text-gray-600">No food in inventory - use "Buy Food" to purchase food!</div>'
-        }
-      </div>
-      
-      <button class="w-full py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition close-dropdown">Close</button>
-    </div>
-  `;
-  
-  document.body.appendChild(dropdown);
-  
-  // Add event listeners
-  dropdown.querySelector('.close-dropdown').onclick = () => {
-    document.body.removeChild(dropdown);
-  };
-  
-  dropdown.onclick = (e) => {
-    if (e.target === dropdown) {
+    `;
+    
+    document.body.appendChild(dropdown);
+    
+    // Add event listeners
+    dropdown.querySelector('.close-dropdown').onclick = () => {
       document.body.removeChild(dropdown);
-    }
-  };
+    };
+    
+    dropdown.onclick = (e) => {
+      if (e.target === dropdown) {
+        document.body.removeChild(dropdown);
+      }
+    };
+    
+    console.log('Vitals dropdown created successfully');
+  } catch (error) {
+    console.error('Error in createVitalsDropdown:', error);
+    showMessage('Error creating vitals display: ' + error.message, 'error');
+  }
 }
 
 // Render decor with images
 function renderDecor(decor) {
+  console.log('Rendering decor:', decor);
   const decorLayer = document.getElementById('decor-layer');
+  console.log('Decor layer element:', decorLayer);
+  
   if (decorLayer) {
     decorLayer.innerHTML = '';
     decor.forEach((d, i) => {
+      console.log('Rendering decor item:', d);
       const decorImage = assetManager.getDecorImage(d.name);
+      console.log('Decor image:', decorImage);
       
       // Position decor items at the bottom of the tank
       const left = 10 + (i * 15) % 80; // Spread them across the bottom
@@ -618,10 +536,17 @@ function createFishDropdown() {
 // Create food purchase dropdown
 function createFoodDropdown() {
   console.log('createFoodDropdown called'); // DEBUG LOG
-  const availableFood = game.getAvailableFood();
+  console.log('Game current biome:', game.currentBiome);
+  console.log('Game player level:', game.player.level);
+  
+  // Use foodData directly
+  const availableFood = foodData.filter(food => 
+    game.player.level >= food.unlockLevel
+  );
+  console.log('Available food after filtering:', availableFood);
   
   if (availableFood.length === 0) {
-    showMessage('No food available in this biome!', 'error');
+    showMessage('No food available at your level!', 'error');
     return;
   }
   
@@ -893,6 +818,7 @@ import { assetManager } from './utils/AssetManager.js';
 import { PurchaseSystem } from './utils/purchaseSystem.js';
 import { fishData } from './data/fishData.js';
 import { decorData } from './data/decorData.js';
+import { foodData } from './data/foodData.js';
 
 const game = new Game();
 game.init();
@@ -1018,21 +944,17 @@ function initializeButtons() {
 
   if (buyFoodBtn) {
     buyFoodBtn.onclick = () => {
-      const availableFood = game.getAvailableFood();
+      console.log('Buy food button clicked!');
+      console.log('Current biome:', game.currentBiome);
+      console.log('Player level:', game.player.level);
       
-      if (availableFood.length === 0) {
-        showMessage('No food available in this biome! Level up to unlock more food types.', 'error');
-        return;
+      // Simplified approach - just create the dropdown
+      try {
+        createFoodDropdown();
+      } catch (error) {
+        console.error('Error creating food dropdown:', error);
+        showMessage('Error: ' + error.message, 'error');
       }
-      
-      const affordableFood = game.getAffordableFood();
-      
-      if (affordableFood.length === 0) {
-        showMessage('You cannot afford any food! Save up more coins to purchase food.', 'error');
-        return;
-      }
-      
-      createFoodDropdown();
     };
   }
 
@@ -1040,11 +962,22 @@ function initializeButtons() {
     console.log('Setting up view vitals button handler...');
     viewVitalsBtn.onclick = () => {
       console.log('View vitals button clicked!');
+      console.log('Game tank length:', game.tank.length);
+      console.log('Game object:', game);
+      
       if (game.tank.length === 0) {
         showMessage('No fish in tank! Add some fish first to view vitals.', 'error');
         return;
       }
-      createVitalsDropdown();
+      
+      try {
+        console.log('Attempting to create vitals dropdown...');
+        createVitalsDropdown();
+        console.log('Vitals dropdown created successfully');
+      } catch (error) {
+        console.error('Error creating vitals dropdown:', error);
+        showMessage('Error displaying vitals: ' + error.message, 'error');
+      }
     };
   }
 
