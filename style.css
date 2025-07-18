@@ -76,6 +76,7 @@ body {
   z-index: 1000;
   max-width: 90vw;
   width: 400px;
+  pointer-events: none; /* Allow clicks to pass through */
 }
 
 .message {
@@ -86,6 +87,27 @@ body {
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   animation: messageSlideIn 0.3s ease-out;
+  border-left: 4px solid transparent;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message.error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-left-color: #991b1b;
+}
+
+.message.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-left-color: #047857;
+}
+
+.message.info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border-left-color: #1d4ed8;
 }
 
 @keyframes messageSlideIn {
@@ -290,9 +312,8 @@ h1, .game-title {
 }
 
 /* Fish */
-.fish-emoji {
+.fish-emoji, .fish-sprite {
   position: absolute;
-  font-size: 2.5rem;
   filter: drop-shadow(0 2px 8px #0003);
   cursor: pointer;
   user-select: none;
@@ -300,17 +321,62 @@ h1, .game-title {
   z-index: 20;
   animation: fishSwimX 8s linear infinite alternate;
 }
+
+.fish-emoji {
+  font-size: 2.5rem;
+}
+
+.fish-sprite {
+  width: 64px;
+  height: 64px;
+}
+
 @keyframes fishSwimX {
   0% { transform: translateX(0); }
   100% { transform: translateX(320px); }
 }
+
 .fish-dropin {
   animation: fishDropIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
 }
+
 @keyframes fishDropIn {
   0% { transform: scale(0.2) translateY(-80px); opacity: 0; }
   80% { transform: scale(1.1) translateY(10px); opacity: 1; }
   100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Decor */
+.decor-sprite {
+  position: absolute;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.decor-sprite:hover {
+  transform: scale(1.1);
+}
+
+/* Layer ordering */
+#bubble-layer {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#decor-layer {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#fish-layer {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* Modal backdrop */
@@ -318,11 +384,111 @@ h1, .game-title {
   backdrop-filter: blur(2px);
 }
 
+/* Progress Bars */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #374151;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 4px 0;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  position: relative;
+}
+
+.progress-happiness {
+  background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+}
+
+.progress-hunger {
+  background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+}
+
+.progress-cleanliness {
+  background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+}
+
+.progress-level {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+}
+
+/* Enhanced dropdown styling */
+.fixed.inset-0 {
+  z-index: 9999;
+}
+
+.fixed.inset-0 .bg-white {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
+}
+
+/* Better button styling for dropdowns */
+.feed-food-option, .food-option, .decor-option {
+  transition: all 0.2s ease;
+  border: 1px solid #d1d5db;
+}
+
+.feed-food-option:hover, .food-option:hover, .decor-option:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.feed-food-option:active, .food-option:active, .decor-option:active {
+  transform: translateY(0);
+}
+
+/* Fish Info Popup */
+.fish-info-popup {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  min-width: 200px;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.fish-info-popup h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #60a5fa;
+}
+
+.fish-info-popup .stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 4px 0;
+}
+
+.fish-info-popup .stat-label {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.fish-info-popup .stat-value {
+  font-size: 11px;
+  font-weight: bold;
+}
+
 /* Responsive tweaks */
 @media (max-width: 600px) {
   #aquarium {
     height: 260px !important;
     min-height: 180px;
+    width: 96vw;
   }
   #hud {
     font-size: 1rem;
@@ -348,6 +514,12 @@ h1, .game-title {
   #messages {
     width: 95vw;
     max-width: 95vw;
+  }
+  
+  .fish-info-popup {
+    font-size: 10px;
+    min-width: 160px;
+    padding: 8px;
   }
 } 
 
@@ -396,7 +568,7 @@ h1, .game-title {
 @media (max-width: 1100px) {
   .aquarium {
     max-width: 100%;
-    width: 100%;
+    width: 96vw;
     height: 320px;
     border-radius: 1.5rem;
   }
@@ -404,7 +576,7 @@ h1, .game-title {
 @media (max-width: 700px) {
   .aquarium {
     max-width: 100%;
-    width: 100%;
+    width: 96vw;
     height: 200px;
     border-radius: 1rem;
     margin: 1.2rem auto 1.2rem auto;
@@ -413,7 +585,7 @@ h1, .game-title {
 @media (max-width: 500px) {
   .aquarium {
     max-width: 100%;
-    width: 100%;
+    width: 96vw;
     height: 140px;
     border-radius: 0.7rem;
   }
@@ -437,7 +609,7 @@ h1, .game-title {
 
 /* --- Tap Tap Fish–style Aquarium UI --- */
 .aquarium {
-  width: 100%;
+  width: 96vw;
   max-width: 1200px;
   height: 400px;
   min-height: 300px;

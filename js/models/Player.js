@@ -3,7 +3,7 @@ export class Player {
     this.coins = data.coins || 100;
     this.level = data.level || 1;
     this.xp = data.xp || 0;
-    this.inventory = data.inventory || { fish: [], decor: [] };
+    this.inventory = data.inventory || { fish: [], decor: [], food: {} };
     this.unlockedBiomes = data.unlockedBiomes || ["Freshwater"];
     this.equipment = data.equipment || [];
   }
@@ -46,6 +46,39 @@ export class Player {
 
   addDecor(decor) {
     this.inventory.decor.push(decor);
+  }
+
+  // Food inventory methods
+  addFood(foodName, quantity = 1) {
+    if (!this.inventory.food[foodName]) {
+      this.inventory.food[foodName] = 0;
+    }
+    this.inventory.food[foodName] += quantity;
+  }
+
+  useFood(foodName) {
+    if (this.inventory.food[foodName] && this.inventory.food[foodName] > 0) {
+      this.inventory.food[foodName]--;
+      if (this.inventory.food[foodName] === 0) {
+        delete this.inventory.food[foodName];
+      }
+      return true;
+    }
+    return false;
+  }
+
+  getFoodQuantity(foodName) {
+    return this.inventory.food[foodName] || 0;
+  }
+
+  hasFood(foodName) {
+    return this.getFoodQuantity(foodName) > 0;
+  }
+
+  getAvailableFood() {
+    return Object.keys(this.inventory.food).filter(foodName => 
+      this.inventory.food[foodName] > 0
+    );
   }
 
   hasEquipment(equipmentName) {

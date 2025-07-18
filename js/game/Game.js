@@ -5,6 +5,7 @@ import { Biome } from '../models/Biome.js';
 import { fishData } from '../data/fishData.js';
 import { decorData } from '../data/decorData.js';
 import { biomeData } from '../data/biomeData.js';
+import { foodData } from '../data/foodData.js';
 import { saveState, loadState } from '../utils/storage.js';
 
 export class Game {
@@ -32,9 +33,36 @@ export class Game {
     saveState({
       player: this.player,
       tank: this.tank,
-      decor: this.decor,
-      currentBiome: this.currentBiome.name
+      decor: this.decor
     });
+  }
+
+  addFish(fishName) {
+    const fishData = this.getFishData(fishName);
+    if (!fishData) return false;
+    
+    if (this.player.spendCoins(fishData.cost)) {
+      const fish = new Fish(fishData);
+      this.tank.push(fish);
+      this.player.addFish(fish);
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  addDecor(decorName) {
+    const decorData = this.getDecorData(decorName);
+    if (!decorData) return false;
+    
+    if (this.player.spendCoins(decorData.unlock.cost)) {
+      const decor = new Decor(decorData);
+      this.decor.push(decor);
+      this.player.addDecor(decor);
+      this.save();
+      return true;
+    }
+    return false;
   }
 
   // Helper method to get fish data by name
@@ -47,23 +75,60 @@ export class Game {
     return decorData.find(d => d.name === decorName);
   }
 
-  feedFish() {
-    // Feed all fish in tank
+  // Helper method to get food data by name
+  getFoodData(foodName) {
+    return foodData.find(f => f.name === foodName);
+  }
+
+  // Purchase food
+  purchaseFood(foodName, quantity = 1) {
+    const foodData = this.getFoodData(foodName);
+    if (!foodData) {
+      return false;
+    }
+    
+    const totalCost = foodData.cost * quantity;
+    
+    if (this.player.spendCoins(totalCost)) {
+      this.player.addFood(foodName, quantity);
+      this.save();
+      return true;
+    }
+    return false;
+  }
+
+  // Feed fish with specific food
+  feedFish(foodName = null) {
     if (this.tank.length === 0) {
       return 0;
     }
     
     let totalCoins = 0;
-    this.tank.forEach(fish => {
-      totalCoins += fish.feed();
-    });
+    
+    if (foodName) {
+      // Use specific food
+      if (!this.player.useFood(foodName)) {
+        return 0; // No food available
+      }
+      
+      const foodData = this.getFoodData(foodName);
+      this.tank.forEach(fish => {
+        totalCoins += fish.feed(foodData);
+      });
+    } else {
+      // Basic feeding (no food cost)
+      this.tank.forEach(fish => {
+        totalCoins += fish.feed();
+      });
+    }
+    
     this.player.earnCoins(totalCoins);
+    this.player.earnXP(totalCoins);
     this.save();
     return totalCoins;
   }
 
   cleanTank() {
-    // Clean all fish (simplified)
     if (this.tank.length === 0) {
       return 0;
     }
@@ -72,53 +137,41 @@ export class Game {
     this.tank.forEach(fish => {
       totalCoins += fish.clean();
     });
+    
     this.player.earnCoins(totalCoins);
+    this.player.earnXP(totalCoins);
     this.save();
     return totalCoins;
   }
 
-  addDecor(decorName) {
-    // Find decor by name and add if player can afford
-    const decorObj = decorData.find(d => d.name === decorName);
-    if (!decorObj) return false;
-    
-    // Check if player has enough coins
-    if (!this.player.spendCoins(decorObj.unlock.cost)) {
-      return false;
-    }
-    
-    // Check if decor is already in tank
-    if (this.decor.some(d => d.name === decorName)) {
-      return false;
-    }
-    
-    const decor = new Decor(decorObj);
-    this.decor.push(decor);
-    this.player.addDecor(decor);
-    this.save();
-    return true;
+  // Get available food for current biome
+  getAvailableFood() {
+    return foodData.filter(food => 
+      food.biome === this.currentBiome.name && 
+      this.player.level >= food.unlock.level
+    );
   }
 
-  addFish(fishName) {
-    // Find fish by name and add
-    const fishObj = fishData.find(f => f.name === fishName);
-    if (!fishObj) return false;
-    
-    // Check if fish is already in tank
-    if (this.tank.some(f => f.name === fishName)) {
-      return false;
-    }
-    
-    // Check if player has enough coins
-    if (!this.player.spendCoins(fishObj.cost)) {
-      return false;
-    }
-    
-    const fish = new Fish(fishObj);
-    this.tank.push(fish);
-    this.player.addFish(fish);
-    this.save();
-    return true;
+  // Get available fish for current level and biome
+  getAvailableFish() {
+    return fishData.filter(fish => 
+      this.player.level >= (fish.level || 1)
+    );
+  }
+
+  // Get available decor for current level and biome  
+  getAvailableDecor() {
+    return decorData.filter(decor => 
+      this.player.level >= decor.unlock.level &&
+      !this.decor.some(d => d.name === decor.name)
+    );
+  }
+
+  // Get affordable food
+  getAffordableFood() {
+    return this.getAvailableFood().filter(food => 
+      this.player.coins >= food.cost
+    );
   }
 
   switchBiome(biomeName) {

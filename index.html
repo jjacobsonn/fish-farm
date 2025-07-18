@@ -76,16 +76,18 @@
             <main class="space-y-3 w-full flex flex-col items-center">
               <div id="aquarium" class="aquarium w-full max-w-[1200px] mb-4 rounded-2xl overflow-hidden shadow-lg mx-auto">
                 <div id="bubble-layer"></div>
+                <div id="decor-layer"></div>
                 <div id="fish-layer"></div>
               </div>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full" style="gap: 12px;">
                 <button id="feed-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Feed Fish</button>
                 <button id="clean-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Clean Tank</button>
-                <button id="rest-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Rest</button>
+                <button id="buy-food-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Buy Food</button>
                 <button id="add-decor-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Add Decor</button>
               </div>
-              <div class="w-full mt-3">
-                <button id="add-fish-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#06d6a0] shadow-md hover:scale-105 transition">Add Fish</button>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mt-3" style="gap: 12px;">
+                <button id="add-fish-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">Add Fish</button>
+                <button id="view-vitals-btn" class="w-full py-3 px-6 font-semibold text-white rounded-xl bg-[#219ebc] shadow-md hover:scale-105 transition">View Vitals</button>
               </div>
               <section id="decor-section" style="display:none;"></section>
               <section id="tank-section" style="display:none;"></section>
