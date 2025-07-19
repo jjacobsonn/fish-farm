@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fish Farm Test</title>
+</head>
+<body>
+    <h1>Fish Farm Test</h1>
+    <button id="test-feed">Test Feed</button>
+    <button id="test-buy-food">Test Buy Food</button>
+    <div id="output"></div>
+
+    <script type="module">
+        import { Game } from './js/game/Game.js';
+        import { PurchaseSystem } from './js/utils/purchaseSystem.js';
+        import { foodData } from './js/data/foodData.js';
+
+        const game = new Game();
+        game.init();
+        
+        // Add a test fish
+        game.addFish('Goldfish');
+        
+        console.log('Game initialized:', game);
+        console.log('Tank fish:', game.tank);
+        console.log('Player food inventory:', game.player.inventory.food);
+        console.log('Food data:', foodData);
+
+        document.getElementById('test-feed').onclick = () => {
+            const coinsEarned = game.feedFish();
+            document.getElementById('output').innerHTML += `<p>Fed fish, earned ${coinsEarned} coins</p>`;
+        };
+
+        document.getElementById('test-buy-food').onclick = () => {
+            const purchaseSystem = new PurchaseSystem(game);
+            const result = purchaseSystem.purchaseFood('Basic Food', 1);
+            document.getElementById('output').innerHTML += `<p>Buy food result: ${JSON.stringify(result)}</p>`;
+            console.log('Player food after purchase:', game.player.inventory.food);
+        };
+    </script>
+</body>
+</html>

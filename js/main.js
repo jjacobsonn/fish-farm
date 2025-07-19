@@ -535,15 +535,10 @@ function createFishDropdown() {
 
 // Create food purchase dropdown
 function createFoodDropdown() {
-  console.log('createFoodDropdown called'); // DEBUG LOG
-  console.log('Game current biome:', game.currentBiome);
-  console.log('Game player level:', game.player.level);
-  
   // Use foodData directly
   const availableFood = foodData.filter(food => 
     game.player.level >= food.unlockLevel
   );
-  console.log('Available food after filtering:', availableFood);
   
   if (availableFood.length === 0) {
     showMessage('No food available at your level!', 'error');
@@ -587,12 +582,11 @@ function createFoodDropdown() {
   
   document.body.appendChild(dropdown);
   
-  // Add event listeners
+  // Add event listeners - EXACTLY like fish dropdown
   dropdown.querySelectorAll('.food-option').forEach(btn => {
     btn.onclick = () => {
       if (btn.disabled) return;
       
-      console.log('Food option clicked:', btn.dataset.food); // DEBUG LOG
       const foodName = btn.dataset.food;
       const purchaseSystem = new PurchaseSystem(game);
       const result = purchaseSystem.purchaseFood(foodName, 1);
@@ -600,10 +594,11 @@ function createFoodDropdown() {
       if (result.success) {
         showMessage(result.message, 'success');
         render();
+        document.body.removeChild(dropdown);
       } else {
         showMessage(result.message, 'error');
+        document.body.removeChild(dropdown);
       }
-      document.body.removeChild(dropdown);
     };
   });
   
@@ -896,29 +891,9 @@ function initializeButtons() {
         showMessage('No fish to feed! Buy some fish first.', 'error');
         return;
       }
-      // Auto-feed with best food in inventory, or basic food if none
-      const availableFood = game.player.getAvailableFood();
-      let foodName = null;
-      let foodLabel = 'basic food';
-      if (availableFood.length > 0) {
-        // Find the best food (highest hunger+happiness effect)
-        let bestScore = -Infinity;
-        for (const fname of availableFood) {
-          const fdata = game.getFoodData(fname);
-          if (fdata) {
-            const score = (fdata.effect.hunger || 0) + (fdata.effect.happiness || 0);
-            if (score > bestScore) {
-              bestScore = score;
-              foodName = fname;
-            }
-          }
-        }
-        if (foodName) {
-          foodLabel = foodName;
-        }
-      }
-      const coinsEarned = game.feedFish(foodName);
-      showMessage(`Fed all fish with ${foodLabel}! Earned ${coinsEarned} coins.`, 'success');
+      
+      const coinsEarned = game.feedFish();
+      showMessage(`Fed all fish! Earned ${coinsEarned} coins.`, 'success');
       render();
     };
   }
@@ -944,36 +919,31 @@ function initializeButtons() {
 
   if (buyFoodBtn) {
     buyFoodBtn.onclick = () => {
-      console.log('Buy food button clicked!');
-      console.log('Current biome:', game.currentBiome);
-      console.log('Player level:', game.player.level);
+      // Check if player has coins
+      if (game.player.coins < 2) { // Basic Food costs 2 coins
+        showMessage('Not enough coins! You need at least 2 coins to buy Basic Food.', 'error');
+        return;
+      }
       
-      // Simplified approach - just create the dropdown
+      // Create the food dropdown
       try {
         createFoodDropdown();
       } catch (error) {
         console.error('Error creating food dropdown:', error);
-        showMessage('Error: ' + error.message, 'error');
+        showMessage('Error opening food store: ' + error.message, 'error');
       }
     };
   }
 
   if (viewVitalsBtn) {
-    console.log('Setting up view vitals button handler...');
     viewVitalsBtn.onclick = () => {
-      console.log('View vitals button clicked!');
-      console.log('Game tank length:', game.tank.length);
-      console.log('Game object:', game);
-      
       if (game.tank.length === 0) {
         showMessage('No fish in tank! Add some fish first to view vitals.', 'error');
         return;
       }
       
       try {
-        console.log('Attempting to create vitals dropdown...');
         createVitalsDropdown();
-        console.log('Vitals dropdown created successfully');
       } catch (error) {
         console.error('Error creating vitals dropdown:', error);
         showMessage('Error displaying vitals: ' + error.message, 'error');

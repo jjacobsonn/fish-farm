@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fish Farm Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { margin: 5px; padding: 10px; font-size: 14px; }
+        #state { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        #output { background: #fff; border: 1px solid #ccc; padding: 15px; margin: 10px 0; height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>Fish Farm Debug Test</h1>
+    <div>
+        <h2>Current State:</h2>
+        <div id="state"></div>
+    </div>
+    <div>
+        <h2>Actions:</h2>
+        <button id="clear-tank">Clear Tank</button>
+        <button id="buy-fish">Buy Goldfish</button>
+        <button id="feed-fish">Feed Fish (Basic)</button>
+        <button id="buy-food">Buy Basic Food</button>
+        <button id="feed-with-food">Feed with Purchased Food</button>
+    </div>
+    <div>
+        <h2>Output:</h2>
+        <div id="output"></div>
+    </div>
+
+    <script type="module">
+        import { Game } from './js/game/Game.js';
+        import { PurchaseSystem } from './js/utils/purchaseSystem.js';
+        
+        const game = new Game();
+        game.init();
+        
+        const purchaseSystem = new PurchaseSystem(game);
+        
+        function updateState() {
+            const stateDiv = document.getElementById('state');
+            stateDiv.innerHTML = `
+                <p><strong>Player Coins:</strong> ${game.player.coins}</p>
+                <p><strong>Player Level:</strong> ${game.player.level}</p>
+                <p><strong>Tank Fish Count:</strong> ${game.tank.length}</p>
+                <p><strong>Available Food in Inventory:</strong> ${JSON.stringify(game.player.inventory.food)}</p>
+                <p><strong>Fish in Tank:</strong> ${game.tank.map(f => f.name).join(', ') || 'None'}</p>
+            `;
+        }
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `<p><strong>${timestamp}:</strong> ${message}</p>`;
+            output.scrollTop = output.scrollHeight;
+            console.log(message);
+        }
+        
+        updateState();
+        
+        document.getElementById('clear-tank').onclick = () => {
+            const result = game.clearTank();
+            log(`Clear tank result: ${result}`);
+            updateState();
+        };
+        
+        document.getElementById('buy-fish').onclick = () => {
+            log('=== BUYING GOLDFISH ===');
+            const result = purchaseSystem.purchaseFish('Goldfish');
+            log(`Buy fish result: ${JSON.stringify(result)}`);
+            updateState();
+        };
+        
+        document.getElementById('feed-fish').onclick = () => {
+            log('=== BASIC FEEDING ATTEMPT ===');
+            log(`Tank length before feeding: ${game.tank.length}`);
+            
+            if (game.tank.length === 0) {
+                log('ERROR: No fish in tank to feed!');
+                return;
+            }
+            
+            // Test basic feeding (no food required)
+            const coinsEarned = game.feedFish();
+            log(`Basic feeding result - coins earned: ${coinsEarned}`);
+            updateState();
+        };
+        
+        document.getElementById('buy-food').onclick = () => {
+            log('=== FOOD PURCHASE ATTEMPT ===');
+            log(`Player coins before purchase: ${game.player.coins}`);
+            log(`Player level: ${game.player.level}`);
+            
+            const result = purchaseSystem.purchaseFood('Basic Food', 1);
+            log(`Buy food result: ${JSON.stringify(result)}`);
+            log(`Player coins after purchase: ${game.player.coins}`);
+            updateState();
+        };
+        
+        document.getElementById('feed-with-food').onclick = () => {
+            log('=== FEEDING WITH PURCHASED FOOD ===');
+            const availableFood = game.player.getAvailableFood();
+            log(`Available food: ${JSON.stringify(availableFood)}`);
+            
+            if (game.tank.length === 0) {
+                log('ERROR: No fish in tank to feed!');
+                return;
+            }
+            
+            if (availableFood.length === 0) {
+                log('ERROR: No food in inventory!');
+                return;
+            }
+            
+            const foodName = availableFood[0]; // Use first available food
+            log(`Attempting to feed with: ${foodName}`);
+            
+            const coinsEarned = game.feedFish(foodName);
+            log(`Feeding with food result - coins earned: ${coinsEarned}`);
+            updateState();
+        };
+    </script>
+</body>
+</html>
