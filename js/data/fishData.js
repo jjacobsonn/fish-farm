@@ -18,7 +18,8 @@ export const fishData = [
     baseReward: 5, 
     cost: 35,
     unlockLevel: 2,
-    image: "neon-tetra.png"
+    image: "neon-tetra.png",
+    facesRight: false
   },
   { 
     name: "Angelfish", 

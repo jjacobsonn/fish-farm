@@ -105,7 +105,8 @@ function renderFish(tank) {
     const fishImage = assetManager.getFishImage(f.name);
     const top = 20 + Math.random() * 60;
     const left = 2 + Math.random() * 90;
-    const direction = Math.random() > 0.5 ? 1 : -1;
+    // Make Neon Tetra always move right, others random
+    const direction = f.name === "Neon Tetra" ? 1 : (Math.random() > 0.5 ? 1 : -1);
     
     // Create fish element
     const fishElement = document.createElement('div');
